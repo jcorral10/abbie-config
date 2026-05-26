@@ -1,0 +1,38 @@
+{
+  "_meta": {
+    "description": "Approved recurring charges. Abbie uses this for monthly subscription audits.",
+    "last_updated": "2026-05-26",
+    "rule": "Any recurring charge NOT on this list gets flagged as an anomaly."
+  },
+
+  "active": [
+    { "name": "Sterling Wellness (Ozempic)", "amount": 216.67, "account": "Chase Flex", "notes": "Wife's medical — non-negotiable" },
+    { "name": "Atmos Energy", "amount_range": [100, 300], "account": "Chase Flex", "notes": "Variable utility" },
+    { "name": "Bnai Jehudah", "amount": 200.00, "account": "Chase Flex", "notes": "Community commitment" },
+    { "name": "Choice Home Warranty", "amount": 107.70, "account": "Chase Flex", "notes": "2-3 claims/yr — keep" },
+    { "name": "Google Fiber", "amount": 71.40, "account": "Chase Flex", "notes": "Internet — essential" },
+    { "name": "Netflix", "amount": 17.99, "account": "Chase Flex", "notes": "Family use — keep" },
+    { "name": "Spotify", "amount": 16.65, "account": "Chase Flex", "notes": "Family plan — keep" },
+    { "name": "SimpliSafe", "amount": 32.99, "account": "Chase Flex", "notes": "Security" },
+    { "name": "Abacus.AI", "amount": 20.00, "account": "Chase Flex", "notes": "Abbie's LLM router — essential" },
+    { "name": "Pets Best Insurance", "amount": 11.00, "account": "Chase Flex", "notes": "Low cost, high value" },
+    { "name": "Google One", "amount": 1.99, "account": "Chase Flex", "notes": "Storage" },
+    { "name": "Colgate-Palmolive (pet food)", "amount": 89.78, "frequency": "every_2_months", "account": "Chase Flex", "notes": "Pet food subscription — reduced to bimonthly. Next shipment: July 2026" }
+  ],
+
+  "paused": [
+    { "name": "YouTube TV", "amount": 90.75, "paused_date": "2026-05-26", "resume_review": "August 2026", "notes": "Paused to save — re-evaluate in August" },
+    { "name": "HBO Max", "amount": 20.22, "paused_date": "2026-05-26", "resume_review": "August 2026", "notes": "Paused to save" },
+    { "name": "Apple TV+", "amount": 12.99, "paused_date": "2026-05-26", "resume_review": "August 2026", "notes": "Paused to save" },
+    { "name": "Blue Valley Food (school meals)", "amount": 96.00, "paused_date": "2026-05-26", "resume_review": "September 2026", "notes": "School meal plan — resumes with school year" }
+  ],
+
+  "fixed_obligations": [
+    { "name": "Mortgage", "amount": 2145, "account": "Checking", "day_of_month": 1 },
+    { "name": "Honda Car Note", "amount": 604, "account": "Checking" },
+    { "name": "Tesla Car Note", "amount": 435, "account": "Checking" },
+    { "name": "Student Loan", "amount": 217, "account": "Checking" },
+    { "name": "Insurance + Misc Fixed", "amount": 708, "account": "Checking" },
+    { "name": "ER Payment Plan", "amount": 150, "account": "Savings", "notes": "Auto-draft from savings. ~16 months remaining." }
+  ]
+}
