@@ -24,6 +24,19 @@
 - Abbie runs ~23 cron jobs/week (briefings, logs, plant reminders, financial)
 - Heartbeats run every 6 hours
 - Antigravity (this agent) runs on-demand via Gemini/Claude, independent billing
+- **OpenClaw env vars**: Managed via `openclaw.json` → `env.vars` section, NOT system environment (`.bashrc`, `.profile`, supervisord). OpenClaw auto-reloads on config change.
+- **Process manager**: supervisord (`/etc/supervisor/conf.d/openclaw.conf`) — do NOT add env vars here
+- **Notion connection**: Direct API key (`NOTION_API_KEY`) in `openclaw.json` env.vars + `~/.config/notion/api_key`. No Rube MCP on this instance.
+- **Notion integration**: Pages must be explicitly shared with the integration (INVENT, FINANCE confirmed shared)
+
+### 2026-05-27: Invention Idea Processor
+- **Decision**: Build `#invent` trigger skill for IP/market analysis
+- **Database**: INVENT (`ff59713b-9715-470d-98f8-f957e56f3850`)
+- **Model Tiers**: Kimi K2.6 for detection/capture, Sonnet 4.6 for deep analysis (IP + market + improvements)
+- **Skill Location**: `.agents/skills/invention-processor/`
+- **Triggers**: `#invent` tag, "invention idea" phrase, and secondary patterns
+- **Pipeline**: Detect → Capture (Notion) → IP Screen (web search) → Market Analysis → Cross-Reference → Improvement Suggestions → Report
+- **Integration**: Same NOTION_API_KEY as financial skill, schema-adaptive (discovers DB properties on first run)
 
 ### 2026-05-26: Financial Automation System
 - **Decision**: Build Notion-based personal finance automation
