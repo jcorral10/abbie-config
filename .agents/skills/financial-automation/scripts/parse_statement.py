@@ -6,15 +6,17 @@ Usage:
     python parse_statement.py <pdf_path> <bank_type>
 
 Bank types:
-    chase_credit  - Chase Flex / Chase credit card statements
-    chase_checking - Chase checking account statements
-    usbank        - US Bank checking/savings statements
+    chase_credit    - Chase Flex / Chase credit card statements
+    chase_sapphire  - Chase Sapphire Reserve credit card statements
+    chase_checking  - Chase checking account statements
+    usbank          - US Bank checking/savings statements
 
 Output:
     JSON array of transactions to stdout.
-    Each transaction: {date, description, amount, type, raw_text}
+    Each transaction: {date, description, amount, type, raw_text, fingerprint}
 """
 
+import hashlib
 import json
 import re
 import sys
@@ -89,6 +91,30 @@ def classify_transaction_type(description: str, amount: float) -> str:
     return "purchase"
 
 
+def make_fingerprint(date: str, amount: float, description: str) -> str:
+    """Create a unique fingerprint for duplicate detection."""
+    raw = f"{date}|{amount:.2f}|{description.upper().strip()}"
+    return hashlib.sha256(raw.encode()).hexdigest()[:16]
+
+
+def deduplicate(transactions: list[dict]) -> list[dict]:
+    """Remove duplicate transactions based on fingerprint."""
+    seen = set()
+    unique = []
+    for tx in transactions:
+        fp = tx.get("fingerprint", make_fingerprint(
+            tx["date"], tx.get("amount", 0), tx["description"]
+        ))
+        if fp not in seen:
+            seen.add(fp)
+            unique.append(tx)
+    dupes_removed = len(transactions) - len(unique)
+    if dupes_removed > 0:
+        import sys
+        print(f"Removed {dupes_removed} duplicate transactions", file=sys.stderr)
+    return unique
+
+
 def parse_chase_credit(pdf_path: str) -> list[dict]:
     """
     Parse Chase credit card (Flex) PDF statement.
@@ -138,15 +164,17 @@ def parse_chase_credit(pdf_path: str) -> list[dict]:
                 spending_amount = abs(amount)
                 tx_type = classify_transaction_type(description, amount)
 
+                final_amount = spending_amount if amount < 0 else -spending_amount
                 transactions.append({
                     "date": date_str,
                     "description": description,
-                    "amount": spending_amount if amount < 0 else -spending_amount,
+                    "amount": final_amount,
                     "type": tx_type,
                     "raw_text": line,
+                    "fingerprint": make_fingerprint(date_str, final_amount, description),
                 })
 
-    return transactions
+    return deduplicate(transactions)
 
 
 def parse_chase_checking(pdf_path: str) -> list[dict]:
@@ -314,6 +342,7 @@ def parse_usbank(pdf_path: str) -> list[dict]:
 
 PARSERS = {
     "chase_credit": parse_chase_credit,
+    "chase_sapphire": parse_chase_credit,
     "chase_checking": parse_chase_checking,
     "usbank": parse_usbank,
 }
