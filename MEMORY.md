@@ -95,6 +95,20 @@
 - **Deployment**: Commit 4d1000a pushed to abbie-config, task sent to Allie via bridge
 - **Pending**: Jon needs to provide interest rates, debt balances, 401(k) details
 
+### 2026-06-10: Health & Fitness System
+- **Decision**: Build two-layer health operating system mirroring the financial architecture
+- **New Skills**: `health-automation` (tactical data collection) + `health-planner` (strategic intelligence)
+- **Data Sources**: Hevy API (workouts, body metrics, PRs), Apple Health via Health Auto Export ($24.99 lifetime → webhook), Notion DBs (medications, labs), Telegram (supplements, injuries)
+- **Hevy API**: REST API with `api-key` header auth. Endpoints: workouts, workouts/events (delta sync), body_measurements, exercise_templates, exercise_history, routines
+- **Apple Health Bridge**: Health Auto Export iOS app → POST JSON to `https://VM/api/health` → FastAPI receiver (`health_webhook.py`) → SQLite (`health_data.db`)
+- **Scripts**: hevy_sync.py (1094 lines, workout+body metrics+PR sync), health_webhook.py (824 lines, FastAPI receiver), lab_interpreter.py (1376 lines, PDF parser+trends)
+- **New Notion DBs**: Body Metrics, Injuries, Family Health Calendar, Health Snapshots
+- **Enhanced Notion DBs**: Medications (9 new supplement fields), Lab Markers (optimal ranges + categories)
+- **10 Cron Jobs**: H1 Hevy Sync (daily 10PM), H2 Body Metrics (Sat 8AM), H3 Weekly Summary (Sun 7PM), H4 Supplement Reorder (Wed 9AM), H5 Recovery Score (daily 7AM), H6 Training Intel (Sun 7:15PM), H7 Health Score (1st 8:30PM), H8 Biomarker Trends (on new labs), H9 Family Cal (Mon 8AM), H10 Supplement Schedule (daily 7AM/9PM)
+- **Resources**: 45+ lab reference ranges, 15 supplement timing profiles, 41 exercise form library entries, health score weights
+- **Deployment**: Commit 50aa6f4 pushed to abbie-config
+- **Pending**: Jon needs to set up Health Auto Export on iPhone, confirm VM HTTPS endpoint accessibility, provide Hevy API key to Allie's env
+
 ## Long-Term User Preferences
 - Jon approves **auto-escalation** — Allie can switch models without asking when task complexity warrants it
 - Prefers explicit approval gates for side-effect actions (not model switching)
