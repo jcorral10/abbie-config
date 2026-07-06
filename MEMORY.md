@@ -1,7 +1,7 @@
 # Memory
 
 ## Technical Stack
-- **Personal Assistant Platform**: Hermes Agent v0.11.0 (running on Ubuntu VM)
+- **Personal Assistant Platform**: Hermes Agent v0.15.2 (running on Ubuntu VM, verified 2026-07-06)
 - **Agent Name**: Allie (previously Abbie on OpenClaw)
 - **Main Model**: deepseek/deepseek-v4-flash via OpenRouter
 - **Fallback Model**: anthropic/claude-sonnet-4-6
@@ -40,7 +40,7 @@
 ## Architecture Decisions
 
 ### 2026-06-08: Migration from OpenClaw to Hermes
-- **Decision**: Full migration from OpenClaw to Hermes Agent v0.11.0
+- **Decision**: Full migration from OpenClaw to Hermes Agent (now v0.15.2)
 - **Impact**: New skill format, new config structure, new platform integrations
 - **Previous**: OpenClaw with Abacus RouteLLM, `openclaw.json` config
 - **Current**: Hermes with OpenRouter primary, local Gemini auxiliary at localhost:8081
@@ -83,9 +83,16 @@
 - **Northwestern Mutual**: Whole life/IBC, $1M/30yr, $95.46/mo
 - **Investments**: Schwab ($10/mo), Jack Custodial IRA ($3/mo), Jaime 401k (Alight), Jon 401k (TBD)
 
-### Active Crons (as of 2026-06-09)
-- Monthly Financial Update (1st of month @ 9am, deepseek-v4-flash) — recurring
-- 7 new financial-planner crons pending deployment: Low-Balance Forecast (Wed 7am), Spending Velocity (daily 8pm), Quarterly Review (Jan/Apr/Jul/Oct), Chase Flex Q Activation, Bonus Paycheck Planner, Bill Change Detection, Rewards Wrong-Card Alert
+### Active Crons (verified 2026-07-06 from Allie's live report)
+1. Monthly Financial Update — 1st @ 9am
+2. hevy-daily-sync — Daily @ 10am
+3. hevy-body-metrics-sync — Sundays @ 8am
+4. weekly-training-intelligence — Sundays @ 7pm
+5. drive-health-reader — Daily @ 8am & 6pm
+6. weekly-cost-review — Mondays @ 10am
+7. weekly-fitness-overview — Mondays @ 9am
+
+**Not deployed**: 7 financial-planner crons (#8–#14) from SKILL.md were never created on the VM
 
 ### 2026-06-09: Financial Planner Upgrade
 - **Decision**: Upgrade Allie from budget tracker to personal accountant/financial planner
