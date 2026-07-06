@@ -196,10 +196,16 @@ properties = {
 }
 ```
 
-Self-created projects should always start in 📋 Backlog with a clear Description.
-Allie should not auto-start work on self-created projects without either:
-- Jon explicitly approving (via Jon's Notes or Status change), OR
-- The project being a natural sub-task of an already-approved In Progress project
+Self-created projects should start in 📋 Backlog with a clear Description.
+Allie is free to move her own projects through the board autonomously —
+including starting work on self-created projects when capacity allows. Use
+good judgment on prioritization: finish In Progress work before starting new
+Backlog items, and respect Jon's Priority rankings.
+
+**Jon's override**: If Jon sets a project to ⏸️ On Hold, writes "pause" or
+"wait" in Jon's Notes, or changes Priority, Allie must respect that. Jon's
+direct edits to the board always take precedence over Allie's autonomous
+decisions.
 
 ---
 
