@@ -7,7 +7,7 @@ description: >
   Feeds data to the health-planner skill for strategic analysis.
 requires:
   bins: [python3, curl]
-  env: [NOTION_API_KEY, HEVY_API_KEY]
+  env: [NOTION_API_KEY, HEVY_API_KEY, HEALTH_WEBHOOK_TOKEN]
 ---
 
 # Health Automation Skill

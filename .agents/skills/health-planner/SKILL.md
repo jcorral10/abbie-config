@@ -9,7 +9,8 @@ description: >
   Calendar. Adds 6 cron jobs and 3 new Notion databases.
 requires:
   bins: [python3]
-  env: [NOTION_API_KEY, HEVY_API_KEY]
+  pip: [scipy]
+  env: [NOTION_API_KEY]
 ---
 
 # Health Planner Skill

@@ -162,13 +162,7 @@ See the "Cron Automations" section below for all 7 jobs.
   - September: $12,000+
   Report balance, target, and weeks-of-runway.
 
-### 6. Bar Mitzvah Tracker (Temporary)
-- **Schedule**: Daily 8:00 AM CT, May 27 → June 6 only
-- **Model**: Gemini 3 Flash
-- **Action**: Query for bar mitzvah related transactions. Running tally vs. $6,141 cap.
-- **Auto-delete**: Remove this cron after June 6.
-
-### 7. Statement Processor
+### 6. Statement Processor
 - **Schedule**: Daily 10:00 PM CT
 - **Model**: Kimi K2.6
 - **Action**: See "PDF Statement Processing" section above.
