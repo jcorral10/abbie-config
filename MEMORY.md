@@ -61,7 +61,7 @@
 - **Merchant Cache**: Self-learning JSON mapping, pre-seeded with 60+ known merchants
 
 ### Notion Databases (Allie's Control Plane)
-- **ALLIE page** (`36d63d55-66c5-8163-8bc9-c438cb43ce3b`): MEMORY, SKILLS, DAILY LOGS, 📋 Project Board (Kanban — pending creation)
+- **ALLIE page** (`36d63d55-66c5-8163-8bc9-c438cb43ce3b`): MEMORY, SKILLS, DAILY LOGS, 📋 Project Board (`39563d55-66c5-81c3-827b-e124fc4bba17`)
 - **INVENT page** (`52b3ad05-9b6a-431a-b994-de8b79cb16ea`): Ideas DB (16 properties)
 - **FINANCE page** (`31e8275a-14ea-41b1-98c6-d3ec92de2bf9`): Accounts, Categories, Budgets, Transactions, Statements, Bills & Budget, Financial Roadmap
 - **Health & Fitness page** (`36d63d55-66c5-8125-8c68-ee03bf91096c`): Workouts, PRs, Medications, Lab Results, Lab Markers
