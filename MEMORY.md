@@ -1,7 +1,7 @@
 # Memory
 
 ## Technical Stack
-- **Personal Assistant Platform**: Hermes Agent v0.15.2 (running on Ubuntu VM, verified 2026-07-06)
+- **Personal Assistant Platform**: Hermes Agent v0.18.2 (running on Ubuntu VM, verified 2026-07-06)
 - **Agent Name**: Allie (previously Abbie on OpenClaw)
 - **Main Model**: deepseek/deepseek-v4-flash via OpenRouter
 - **Fallback Model**: anthropic/claude-sonnet-4-6
@@ -23,7 +23,7 @@
 ## Skills Library
 - **33 categories, ~280+ skills** under `~/.hermes/skills/`
 - Key categories: productivity, software-development, devops, autonomous-ai-agents, research, creative, mcp, github, bioinformatics (300+), cad-skill, media, smart-home, mlops, data-science, red-teaming, gaming
-- Custom skills: financial-automation, financial-planner, health-automation, health-planner, invention-processor, project-board, billing-dispute-ai, patent-prior-art-scout, openscad, jupyter-live-kernel, native-mcp, job-search, resume-tailoring
+- Custom skills: financial-automation, financial-planner, health-automation, health-planner, digital-storefront-automation, digital-storefront-planner, invention-processor, project-board, billing-dispute-ai, patent-prior-art-scout, openscad, jupyter-live-kernel, native-mcp, job-search, resume-tailoring
 - **MCP**: Native MCP client for stdio/HTTP servers
 
 ## Hermes Config Highlights
@@ -101,6 +101,18 @@
 - **Scripts**: debt_calculator.py, cash_flow_forecast.py, rewards_optimizer.py — all tested and working
 - **Deployment**: Commit 4d1000a pushed to abbie-config, task sent to Allie via bridge
 - **Pending**: Jon needs to provide interest rates, debt balances, 401(k) details
+
+### 2026-07-14: Digital Storefront System
+- **Decision**: Build two-layer digital business operating system for Etsy digital product sales
+- **New Skills**: `digital-storefront-automation` (tactical: Etsy API, product files, orders, revenue) + `digital-storefront-planner` (strategic: niche research, SEO, pricing, business health, autonomous growth loop)
+- **Platform**: Etsy API v3 (OAuth 2.0 PKCE)
+- **Notion DB**: BUSINESS page (TBD — created during setup) with 7 child DBs (Shop Config, Product Ideas, Products, Listings, Orders, SEO Keywords, Business Snapshots)
+- **Automation Scripts**: etsy_client.py (1041 lines, full API client), product_manager.py (1041 lines, file lifecycle), revenue_sync.py (743 lines, order/fee sync)
+- **Planner Scripts**: niche_researcher.py (1197 lines, trend/demand/competition scoring), seo_optimizer.py (1316 lines, keyword research + listing audit), pricing_engine.py (838 lines, competitive analysis), product_creator.py (1562 lines, generates printable PDFs, SVGs, spreadsheets, social templates, wall art, resumes, checklists)
+- **8 Cron Jobs**: B1 Daily Sales Sync (11PM), B2 Listing Health (Mon/Thu 9AM), B3 Product Upload Monitor (8AM), B4 Weekly Niche Scout (Sun 10AM), B5 SEO Audit (Wed 9AM), B6 Monthly Business Review (1st 10AM), B7 Competitor Watch (1st/15th 8AM), B8 Growth Loop Trigger (Sat 11AM)
+- **Autonomous Growth Loop**: SCAN → VALIDATE → IDEATE → CREATE → OPTIMIZE → LIST → MONITOR → ITERATE (approval gates at CREATE and LIST via Telegram)
+- **Total**: 10,246 lines across 17 files
+- **Pending**: Etsy developer account + API keys, Etsy shop setup, Notion BUSINESS page creation, pip install dependencies, cron deployment on VM
 
 ### 2026-06-10: Health & Fitness System
 - **Decision**: Build two-layer health operating system mirroring the financial architecture
