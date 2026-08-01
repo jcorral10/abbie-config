@@ -1,0 +1,120 @@
+crons:
+  - cron_id: "1"
+    name: Monthly Financial Update
+    current_model: llama-local  # Gemma 4 E4B Q4_K_M (was Qwen3-4B)
+    recommended_model: llama-local
+    reason: Sensitive data (finance) — must stay local
+    frequency: 1st @ 9am
+    estimated_tokens_per_run: 2000
+  - cron_id: "2"
+    name: hevy-daily-sync
+    current_model: gemini-local
+    recommended_model: gemini-local
+    reason: Status checks and updates
+    frequency: Daily @ 10am
+    estimated_tokens_per_run: 500
+  - cron_id: "3"
+    name: hevy-body-metrics-sync
+    current_model: gemini-local
+    recommended_model: gemini-local
+    reason: Simple API sync — body weight/height are not PII-level sensitive
+    frequency: Sundays @ 8am
+    estimated_tokens_per_run: 500
+  - cron_id: "4"
+    name: weekly-training-intelligence
+    current_model: gemini-local
+    recommended_model: gemini-local
+    reason: Synthesis but not complex enough for DeepSeek — gemini handles it well
+    frequency: Sundays @ 7pm
+    estimated_tokens_per_run: 2500
+  - cron_id: "5"
+    name: drive-health-reader
+    current_model: gemini-local
+    recommended_model: gemini-local
+    reason: Medium complexity summaries
+    frequency: Daily @ 8am & 6pm
+    estimated_tokens_per_run: 800
+  - cron_id: "6"
+    name: weekly-cost-review
+    current_model: gemini-local
+    recommended_model: gemini-local
+    reason: Financial summary but not raw PII — aggregated spending categories
+    frequency: Mondays @ 7:30am
+    estimated_tokens_per_run: 1500
+  - cron_id: "7"
+    name: weekly-fitness-overview
+    current_model: gemini-local
+    recommended_model: gemini-local
+    reason: Medium complexity summaries
+    frequency: Mondays @ 7:15am
+    estimated_tokens_per_run: 1200
+  - cron_id: "8"
+    name: HM1 - Weekly Home Maint
+    current_model: gemini-local
+    recommended_model: gemini-local
+    reason: Status checks, no PII
+    frequency: Mondays @ 7:00am
+    estimated_tokens_per_run: 500
+  - cron_id: "9"
+    name: HM2 - Seasonal Home Maint Prep
+    current_model: gemini-local
+    recommended_model: deepseek-v4-flash
+    reason: Planning and complex multi-step reasoning
+    frequency: quarterly
+    estimated_tokens_per_run: 2000
+  - cron_id: "10"
+    name: LS1 - Monthly Life Score
+    current_model: gemini-local
+    recommended_model: deepseek-v4-flash
+    reason: Complex multi-step reasoning and synthesis
+    frequency: 3rd @ 9pm
+    estimated_tokens_per_run: 3500
+  - cron_id: "11"
+    name: TX1/TX2/TX3 Tax Planner
+    current_model: llama-local  # Gemma 4 E4B Q4_K_M (was Qwen3-4B)
+    recommended_model: llama-local
+    reason: Sensitive data (tax, finance) — must stay local
+    frequency: monthly
+    estimated_tokens_per_run: 3000
+  - cron_id: "12"
+    name: CAL2 Calendar
+    current_model: llama-local
+    recommended_model: gemini-local
+    reason: Medium complexity, no PII
+    frequency: daily
+    estimated_tokens_per_run: 600
+  - cron_id: "B1-B3"
+    name: Digital Storefront Daily Syncs
+    current_model: null
+    recommended_model: gemini-local
+    reason: Status checks and basic updates
+    frequency: Daily
+    estimated_tokens_per_run: 1000
+  - cron_id: "B4-B8"
+    name: Digital Storefront Audits and Growth Loop
+    current_model: null
+    recommended_model: deepseek-v4-flash
+    reason: Planning, complex reasoning, creative synthesis
+    frequency: Weekly/Monthly
+    estimated_tokens_per_run: 5000
+  - cron_id: "WI1-WI3"
+    name: World Intelligence Monitor
+    current_model: null
+    recommended_model: gemini-local
+    reason: Status checks and basic summaries
+    frequency: Daily
+    estimated_tokens_per_run: 1200
+  - cron_id: "WI4"
+    name: World Intelligence Market Correlation
+    current_model: null
+    recommended_model: deepseek-v4-flash
+    reason: Complex multi-step reasoning
+    frequency: Sundays @ 5pm
+    estimated_tokens_per_run: 3000
+  - cron_id: "F8-F14"
+    name: Financial Planner 
+    current_model: null
+    recommended_model: llama-local  # Gemma 4 E4B Q4_K_M
+    reason: Sensitive data (finance) — must stay local
+    frequency: Monthly
+    estimated_tokens_per_run: 2000

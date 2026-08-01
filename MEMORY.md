@@ -1,11 +1,13 @@
 # Memory
 
 ## Technical Stack
-- **Personal Assistant Platform**: Hermes Agent v0.18.2 (running on Ubuntu VM, verified 2026-07-06)
+- **Personal Assistant Platform**: Hermes Agent v0.18.2 (running on Abacus AI SuperComputer, migrated 2026-07-30)
+- **SuperComputer**: IP 208.122.8.11, port 9119 (Hermes Gateway), port 8787 (Bridge API), $10/mo
 - **Agent Name**: Allie (previously Abbie on OpenClaw)
 - **Main Model**: deepseek/deepseek-v4-flash via OpenRouter
 - **Fallback Model**: anthropic/claude-sonnet-4-6
 - **Auxiliary Models**: gemini-3.5-flash via local endpoint (localhost:8081) — handles compression, vision, web_extract, session_search, approval
+- **Local LLM**: Gemma 4 E4B IT Q4_K_M via llama.cpp (localhost:8082) — sensitive crons (finance, tax). ~5-6 tok/s generation (upgraded from Qwen3-4B on 2026-07-31). Draft model: Gemma 4 E2B staged for speculative decoding.
 - **TTS**: Edge TTS (Aria voice), fallbacks: ElevenLabs, OpenAI, xAI, Mistral
 - **Process Manager**: supervisord
 - **Terminal**: Docker container (nikolaik/python3.11-nodejs20) with persistent shell
@@ -83,16 +85,22 @@
 - **Northwestern Mutual**: Whole life/IBC, $1M/30yr, $95.46/mo
 - **Investments**: Schwab ($10/mo), Jack Custodial IRA ($3/mo), Jaime 401k (Alight), Jon 401k (TBD)
 
-### Active Crons (verified 2026-07-06 from Allie's live report)
-1. Monthly Financial Update — 1st @ 9am
+### Active Crons (updated 2026-07-28 after LLM upgrade)
+1. Monthly Financial Update — 1st @ 9am (llama-local)
 2. hevy-daily-sync — Daily @ 10am
 3. hevy-body-metrics-sync — Sundays @ 8am
-4. weekly-training-intelligence — Sundays @ 7pm
+4. weekly-training-intelligence — Sundays @ 7pm (gemini-local, moved from llama-local)
 5. drive-health-reader — Daily @ 8am & 6pm
-6. weekly-cost-review — Mondays @ 10am
-7. weekly-fitness-overview — Mondays @ 9am
+6. weekly-cost-review — Mondays @ 7:30am (staggered from 10am)
+7. weekly-fitness-overview — Mondays @ 7:15am (gemini-local, staggered from 9am)
+8. HM1 - Weekly Home Maint — Mondays @ 7:00am (gemini-local, staggered from 8am)
+9. HM2 - Seasonal Home Maint Prep — quarterly (gemini-local)
+10. LS1 - Monthly Life Score — 3rd @ 9pm (gemini-local)
+11. TX1/TX2/TX3 — tax crons (llama-local)
+12. CAL2 — calendar (llama-local)
 
 **Not deployed**: 7 financial-planner crons (#8–#14) from SKILL.md were never created on the VM
+
 
 ### 2026-06-09: Financial Planner Upgrade
 - **Decision**: Upgrade Allie from budget tracker to personal accountant/financial planner
@@ -106,13 +114,21 @@
 - **Decision**: Build two-layer digital business operating system for Etsy digital product sales
 - **New Skills**: `digital-storefront-automation` (tactical: Etsy API, product files, orders, revenue) + `digital-storefront-planner` (strategic: niche research, SEO, pricing, business health, autonomous growth loop)
 - **Platform**: Etsy API v3 (OAuth 2.0 PKCE)
-- **Notion DB**: BUSINESS page (TBD — created during setup) with 7 child DBs (Shop Config, Product Ideas, Products, Listings, Orders, SEO Keywords, Business Snapshots)
+- **Notion DB**: BUSINESS page (under ALLIE) with 7 child DBs:
+  - ⚙️ Shop Config: `39d63d55-66c5-813e-8c5f-ea2515926d27`
+  - 💡 Product Ideas: `39d63d55-66c5-81c4-8307-eb50ddaaf96d`
+  - 📦 Products: `39d63d55-66c5-81bf-b824-e62a7c44ce31`
+  - 🏪 Listings: `39d63d55-66c5-81cd-97b9-c55e5e345757`
+  - 🧾 Orders: `39d63d55-66c5-8102-90ff-d99238dcee7d`
+  - 🔍 SEO Keywords: `39d63d55-66c5-815f-a797-e85017d20447`
+  - 📊 Business Snapshots: `39d63d55-66c5-8195-8f56-cf7101ec8601`
 - **Automation Scripts**: etsy_client.py (1041 lines, full API client), product_manager.py (1041 lines, file lifecycle), revenue_sync.py (743 lines, order/fee sync)
 - **Planner Scripts**: niche_researcher.py (1197 lines, trend/demand/competition scoring), seo_optimizer.py (1316 lines, keyword research + listing audit), pricing_engine.py (838 lines, competitive analysis), product_creator.py (1562 lines, generates printable PDFs, SVGs, spreadsheets, social templates, wall art, resumes, checklists)
 - **8 Cron Jobs**: B1 Daily Sales Sync (11PM), B2 Listing Health (Mon/Thu 9AM), B3 Product Upload Monitor (8AM), B4 Weekly Niche Scout (Sun 10AM), B5 SEO Audit (Wed 9AM), B6 Monthly Business Review (1st 10AM), B7 Competitor Watch (1st/15th 8AM), B8 Growth Loop Trigger (Sat 11AM)
 - **Autonomous Growth Loop**: SCAN → VALIDATE → IDEATE → CREATE → OPTIMIZE → LIST → MONITOR → ITERATE (approval gates at CREATE and LIST via Telegram)
 - **Total**: 10,246 lines across 17 files
-- **Pending**: Etsy developer account + API keys, Etsy shop setup, Notion BUSINESS page creation, pip install dependencies, cron deployment on VM
+- **Deployment**: Commit eaf5e8f pushed, skills installed on VM 2026-07-14, Notion DBs created, Python deps installed
+- **Pending**: Etsy developer account + API keys (`ETSY_API_KEY`, `ETSY_SHARED_SECRET`, `ETSY_SHOP_ID`), `GOOGLE_CHAT_WEBHOOK_BUSINESS`, then deploy crons B1-B8
 
 ### 2026-06-10: Health & Fitness System
 - **Decision**: Build two-layer health operating system mirroring the financial architecture
@@ -135,3 +151,58 @@
 - Weekly synthesis and financial crons should run on mid-tier model
 - Antigravity (this agent) runs on-demand via Gemini/Claude, independent billing from Allie
 
+### 2026-07-20: Robinhood MCP Integration
+- **Decision**: Connected Robinhood Agentic Trading MCP to both Antigravity (Mac) and Allie (Hermes VM)
+- **MCP URL**: `https://agent.robinhood.com/mcp/trading`
+- **Agentic Account**: 959217308 (nickname "Agentic", cash account, individual)
+- **Walled Off**: Main brokerage (••••4705) and Roth IRA (••••2482) — `agentic_allowed=false`
+- **Allie Role**: Primary trader — executes trades via Hermes MCP with Jon's Telegram approval
+- **Antigravity Role**: **Suggestion mode only** — can research, pull quotes, analyze positions, and propose trades but NEVER execute `place_equity_order` or `place_option_order` unless Jon explicitly requests execution
+- **First Trade**: Allie bought 0.141 shares of GOOGL @ $354.74
+- **Config Files**: `~/.gemini/config/mcp_config.json`, `~/.gemini/settings.json` (Antigravity); `~/.hermes/config.yaml` (Allie)
+
+### 2026-07-27: World Monitor Integration (PARKED)
+- **Decision**: Build geopolitical intelligence layer for Allie using World Monitor MCP (42 tools)
+- **Status**: ⏸️ PARKED — waiting for Jon to subscribe to World Monitor Pro ($39.99/mo) or API Starter
+- **Files Built** (ready to deploy):
+  - NEW: `.agents/skills/world-intelligence/` (SKILL.md 336 lines + 2 resource JSONs)
+  - ENHANCED: `stock-weekly-briefing/SKILL.md` (geopolitical correlation layer added)
+  - ENHANCED: `stock-market-macro/SKILL.md` (WM data sources, commodity correlation added)
+- **Push Script**: `scripts/push_skills_to_notion.py` updated with correct SKILLS list
+- **Notion Push**: Not yet run (Notion API was unreachable during build session)
+- **Blocker**: `WORLDMONITOR_API_KEY` env var needed on VM
+- **Crons**: WI1 (daily pulse 6:30AM), WI2 (risk monitor q6h), WI3 (cyber Mon 8:30AM), WI4 (market corr Sun 5PM)
+- **To Resume**: Jon subscribes → provides API key → run push script → tell Allie to install
+
+### 2026-07-28: Local LLM Upgrade (Qwen2.5-7B → Qwen3-4B)
+- **Decision**: Replace Qwen2.5-7B Q4_K_M with Qwen3-4B Q4_K_M for faster CPU inference
+- **Results**: Generation speed 0.75 → 3.8 tok/s (5x), prompt speed 7.8 → 20.4 tok/s (2.6x), model size 4.5 → 2.4 GB (-47%)
+- **Scripts**: `scripts/llm-upgrade.sh` (VM automation), `scripts/push_llm_upgrade.py` (Notion bridge)
+- **Deployment**: Commit 49f3cb6 pushed, Allie executed via Telegram instruction
+- **Fixes Applied**: `pip install python-telegram-bot` (fixed weekly-fitness-overview + HM1 delivery errors)
+- **Cron Changes**: 5 non-sensitive crons moved from llama-local → gemini-local; Monday AM staggered (7:00/7:15/7:30)
+- **Open Items**:
+  - New llama.cpp build (AVX-512+AMX) segfaults on Qwen3 model load — using stable system binary for now
+  - Draft model (Qwen3-0.6B, 462 MB) staged at `~/.local/models/` for speculative decoding when build is fixed
+  - When AVX-512 build works: expect another ~2-3x (→ ~8-12 tok/s) plus spec decoding boost
+
+### 2026-07-30: Abacus AI SuperComputer Migration + HTTP Bridge
+- **Decision**: Allie moved from raw Ubuntu VM to Abacus AI SuperComputer; build direct HTTP bridge replacing Notion relay
+- **Platform Changes**: Always-on guaranteed uptime, built-in DB + S3 storage, public hosting, GitHub integration, 100+ AI models
+- **Bridge Server**: `bridge/server/main.py` — FastAPI on port 8787 with 7 endpoints (health, relay, files, status)
+- **Bridge Client**: `scripts/bridge.py` — CLI replacing `notion_bridge.py` for direct HTTP communication
+- **Auth**: Shared API key (`BRIDGE_API_KEY` env var), stored in `.bridge_config.json` (gitignored)
+- **Config-as-Code**: New `configs/` directory with `model_routing.yaml` and `skill_manifest.yaml`
+- **SSH**: ed25519 key generated at `~/.ssh/id_ed25519`, pending Allie adding to `authorized_keys`
+- **Notion Relay**: Kept as permanent fallback
+
+### 2026-07-31: Local LLM Upgrade (Qwen3-4B → Gemma 4 E4B)
+- **Decision**: Replace Qwen3-4B Q4_K_M with Gemma 4 E4B IT Q4_K_M for sensitive crons
+- **Rationale**: Better agentic/tool-use performance, ~30-50% faster CPU inference, official Google GGUF builds (stronger supply chain provenance), Apache 2.0 license
+- **Model Specs**: 4.0 GB Q4_K_M, ~4.5B active params (PLE architecture), verification test 3.5s round trip
+- **Draft Model**: Gemma 4 E2B IT Q4_K_M (2.9 GB) staged for speculative decoding
+- **Script**: `scripts/gemma4-upgrade.sh` — executed by Allie in 6m 28s
+- **Deployment**: Allie also rebuilt llama.cpp from source (cmake + ggml 0.18.0) and self-patched hermes-env-operations skill
+- **n8n Evaluated and Rejected**: n8n would consume 500 MB-1 GB idle RAM (6-12% of 8 GB budget), add web UI attack surface, and create redundant orchestration layer on top of Hermes-native crons
+- **Bridge Observability**: Added 5 new endpoints (cron-report, cron-reports, files/list, metrics) + request counter middleware to bridge server; 3 new client commands (reports, ls, metrics)
+- **Bridge SSL Fix**: Added ssl.CERT_NONE context + 30s timeout to bridge.py for Cloudflare tunnel compatibility
