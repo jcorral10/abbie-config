@@ -9,6 +9,7 @@ This is the master skill that orchestrates all four analysis skills into one wee
 
 ## Pipeline Steps
 
+0. **Fetch portfolio context**: Query Robinhood MCP for current positions, buying power, and recent trades to tailor analysis to Jon's actual holdings, flag exit signals on current positions, calculate portfolio concentration risk, and size new recommendations against actual buying power.
 1. **Run macro scan**: Determine market phase and favored sectors.
 1b. **Run geopolitical correlation scan**: Pulls data from the world-intelligence skill's Module E output (JSON artifact from Sunday WI4 cron).
 2. **Run fundamental screen**: Filter stock universe by favored sectors and strong fundamentals.
@@ -67,5 +68,7 @@ The weekly briefing now incorporates geopolitical signals to adjust risk and sec
 ## Integration
 
 - **READ**: World-intelligence skill's Module E correlation output (JSON artifact).
+- **READ**: Robinhood MCP — `get_account`, `get_positions`, `get_watchlist` for portfolio context.
+- **WRITE**: `resources/portfolio_snapshot.json` — cached positions for financial-planner Net Worth module.
 
 *Disclaimer: All analysis is for informational purposes only and does not constitute financial advice.*

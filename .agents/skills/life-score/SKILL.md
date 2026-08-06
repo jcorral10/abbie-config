@@ -110,29 +110,41 @@ def calculate_composite_score(scores, active_domains):
 
 **Purpose**: Calculate the domain score for personal growth and learning based on trackable inputs.
 
-**Data Sources**: Self-reported data or tracked habits for reading, courses, and skills.
+**Data Sources**: Automated from existing Allie systems — Invention Ideas DB, Skill modifications, Workout consistency (health-planner), and Project Board completions.
 
 **Algorithm**:
 ```python
-def calculate_growth_score(books_read, active_courses, skill_sessions, reflection_done):
-    # Book component (max 100)
-    book_score = min(100, books_read * 33.33)
+def calculate_growth_score():
+    # 1. Invention activity (from INVENT Notion DB)
+    #    DB: 52b3ad05-9b6a-431a-b994-de8b79cb16ea
+    inventions_this_month = count_notion_pages(
+        db_id="52b3ad05-9b6a-431a-b994-de8b79cb16ea",
+        filter={"Date": {"this_month": True}}
+    )
+    invention_score = min(100, inventions_this_month * 50)  # 2 ideas = max
     
-    # Course component (max 100)
-    course_score = min(100, active_courses * 50)
+    # 2. Skill evolution (count new/refined skills this month)
+    #    Source: Hermes skill directory or Notion SKILLS DB
+    skills_modified = count_skills_modified_this_month()
+    skill_score = min(100, skills_modified * 25)  # 4 skills = max
     
-    # Skill component (max 100)
-    skill_score = min(100, skill_sessions * 20)
+    # 3. Workout consistency as discipline proxy (from health-planner)
+    #    DB: Health & Fitness page workouts
+    workouts_this_month = count_notion_pages(
+        db_id=WORKOUTS_DB_ID,
+        filter={"Date": {"this_month": True}}
+    )
+    consistency_score = min(100, (workouts_this_month / 12) * 100)  # 3/week = max
     
-    # Reflection component
-    reflection_score = 100 if reflection_done else 0
+    # 4. Project completion (from Project Board)
+    #    DB: 39563d55-66c5-81c3-827b-e124fc4bba17
+    projects_completed = count_notion_pages(
+        db_id="39563d55-66c5-81c3-827b-e124fc4bba17",
+        filter={"Status": "Done", "Completed": {"this_month": True}}
+    )
+    project_score = min(100, projects_completed * 33)  # 3 completions = max
     
-    # Simple average if all metrics are tracked
-    # Defaults to 50 if no data is provided
-    if all(x == 0 for x in [books_read, active_courses, skill_sessions]) and not reflection_done:
-        return 50
-        
-    return (book_score + course_score + skill_score + reflection_score) / 4
+    return (invention_score + skill_score + consistency_score + project_score) / 4
 ```
 
 **Output**: A Growth Score (0-100).
@@ -240,15 +252,16 @@ The engine monitors for the following events and issues specific alerts when tri
 | :--- | :--- | :--- |
 | `financial-planner` | `Net Worth Snapshots` (Financial Health Score) | None |
 | `health-planner` | `Health Snapshots` (Composite Health Score) | None |
-| `life-score` | Self (DASHBOARD metrics) | `📊 Life Snapshots` |
+| `project-board` | `📋 Project Board` (completed projects count) | None |
+| `life-score` | Self (DASHBOARD metrics), INVENT DB (ideas count), Project Board (completions) | `📊 Life Snapshots` |
 
 ---
 
 ## Data Collection Checklist
 
-To ensure accurate Growth Score and Life Score calculations, please provide:
-1. [ ] Number of books read this month.
-2. [ ] Number of active courses.
-3. [ ] Number of skill practice sessions completed.
-4. [ ] Confirmation if weekly reflections were done.
+Growth Score inputs are now **fully automated** from existing Notion databases:
+1. [x] Invention ideas — auto-read from INVENT DB (`52b3ad05`)
+2. [x] Skill modifications — counted from Hermes skill directory
+3. [x] Workout consistency — auto-read from Health & Fitness Workouts DB
+4. [x] Project completions — auto-read from Project Board (`39563d55`)
 5. [ ] Links to DASHBOARD and `📊 Life Snapshots` Notion pages once created.

@@ -33,6 +33,12 @@ The `tax-planner` skill provides automated, continuous tax strategy monitoring f
 +----------------------------------+
                  |
 +----------------v-----------------+
+| plaid-budget-sentinel (Skill)    |
+| - personal_finance_category      |
+|   (primary + detailed via Plaid) |
++----------------------------------+
+                 |
++----------------v-----------------+
 | financial-planner (Skill)        |
 | - Debts DB (Mortgage Interest)   |
 | - cash_flow_calendar.json        |
@@ -75,7 +81,11 @@ def deduction_maximizer(transactions, debts, income_data, brackets, categories):
     
     # 1. Scan transactions for deductible categories
     for tx in transactions:
-        category, confidence = match_deduction(tx['merchant'], categories)
+        # Layer 1: Use Plaid's AI categorization if available
+        category, confidence = match_deduction_plaid(tx.get('personal_finance_category', {}))
+        # Layer 2: Fall back to merchant pattern matching
+        if not category:
+            category, confidence = match_deduction(tx['merchant'], categories)
         if category:
             deductions_found.append({
                 "Expense": tx['description'],
@@ -123,6 +133,35 @@ def match_deduction(merchant, categories):
         for pattern in details['merchant_patterns']:
             if pattern.lower() in merchant.lower():
                 return cat_name, details['confidence_level']
+    return None, None
+
+
+# Plaid Personal Finance Category → Tax Deduction mapping
+PLAID_TO_TAX_MAP = {
+    "MEDICAL": {
+        "MEDICAL_DENTAL_CARE": ("Medical (above 7.5% AGI)", "High"),
+        "MEDICAL_EYE_CARE": ("Medical (above 7.5% AGI)", "High"),
+        "MEDICAL_HOSPITALS_AND_CLINICS": ("Medical (above 7.5% AGI)", "High"),
+        "MEDICAL_PHARMACIES_AND_SUPPLEMENTS": ("Medical (above 7.5% AGI)", "Medium"),
+    },
+    "GOVERNMENT_AND_NON_PROFIT": {
+        "GOVERNMENT_AND_NON_PROFIT_DONATIONS": ("Charitable", "High"),
+        "GOVERNMENT_AND_NON_PROFIT_TAX_PAYMENT": ("State/Local Tax", "High"),
+    },
+    "EDUCATION": {"_default": ("Education", "Medium")},
+}
+
+def match_deduction_plaid(pfc):
+    """Match transaction to tax deduction using Plaid's personal_finance_category."""
+    if not pfc:
+        return None, None
+    primary = pfc.get("primary", "")
+    detailed = pfc.get("detailed", "")
+    mapping = PLAID_TO_TAX_MAP.get(primary, {})
+    if detailed in mapping:
+        return mapping[detailed]
+    if "_default" in mapping:
+        return mapping["_default"]
     return None, None
 ```
 
@@ -252,6 +291,7 @@ def generate_tax_dashboard(income_data, deductions, brackets):
 
 ## Integration
 - **financial-automation**: READ (Transactions DB for deductions, Budgets DB)
+- **plaid-budget-sentinel**: READ (personal_finance_category field on Transactions for AI-assisted deduction classification)
 - **financial-planner**: READ (Debts DB for mortgage interest, income sources)
 - **tax-planner**: WRITE (🧾 Tax Deductions database)
 

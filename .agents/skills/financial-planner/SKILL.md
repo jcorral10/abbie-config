@@ -115,8 +115,9 @@ Track household net worth monthly, identify trends, and celebrate milestones.
 **Assets** — pull from these sources:
 1. **Checking accounts**: Accounts DB (Chase Checking, US Bank Checking)
 2. **Savings accounts**: Accounts DB (Emergency Savings, US Bank Savings)
-3. **Investment accounts**: Query Jon for current balances OR integrate when API access available
-   - Jack's Custodial IRA (Schwab)
+3. **Investment accounts**:
+   - **Robinhood Agentic**: Read from `stock-weekly-briefing/resources/portfolio_snapshot.json` (auto-updated weekly by stock-weekly-briefing pipeline via Robinhood MCP)
+   - Jack's Custodial IRA (Schwab) — query Jon or integrate when API access available
    - Schwab account
    - Jaime's 401k (Alight)
    - Jon's 401k
