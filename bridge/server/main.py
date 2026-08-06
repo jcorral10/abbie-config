@@ -67,6 +67,64 @@ def health():
         "timestamp": datetime.now(timezone.utc).isoformat()
     }
 
+# --- Hevy Webhook ---
+import hmac
+import hashlib
+import subprocess
+
+HEVY_WEBHOOK_SECRET = os.environ.get("HEVY_WEBHOOK_SECRET", "")
+HEVY_EVENTS_FILE = HERMES_DIR / "hevy_webhook_events.jsonl"
+
+@app.post("/webhook/hevy")
+async def hevy_webhook(request: Request):
+    body = await request.body()
+
+    # Validate HMAC signature if secret is configured
+    if HEVY_WEBHOOK_SECRET:
+        sig_header = request.headers.get("X-Hevy-Signature", "")
+        expected = hmac.new(
+            HEVY_WEBHOOK_SECRET.encode(), body, hashlib.sha256
+        ).hexdigest()
+        if not hmac.compare_digest(sig_header, expected):
+            logger.warning("Hevy webhook: invalid signature")
+            raise HTTPException(status_code=401, detail="Invalid signature")
+
+    # Parse and store the event
+    try:
+        payload = json.loads(body)
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=400, detail="Invalid JSON")
+
+    event_record = {
+        "id": str(uuid.uuid4()),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "event": payload
+    }
+
+    try:
+        with open(HEVY_EVENTS_FILE, "a") as f:
+            f.write(json.dumps(event_record) + "\n")
+    except Exception as e:
+        logger.error(f"Error writing hevy event: {e}")
+
+    # Drop a message into inbox to trigger hevy_sync
+    sync_record = {
+        "id": str(uuid.uuid4()),
+        "message": "Hevy webhook received: new workout completed. Run delta sync.",
+        "category": "webhook",
+        "context": json.dumps(payload),
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
+    message_deque.append(sync_record)
+    try:
+        with open(INBOX_FILE, "a") as f:
+            f.write(json.dumps(sync_record) + "\n")
+    except Exception as e:
+        logger.error(f"Error writing webhook to inbox: {e}")
+
+    logger.info(f"Hevy webhook processed: {event_record['id']}")
+    return {"status": "ok", "event_id": event_record["id"]}
+
 class SendMessage(BaseModel):
     message: str
     category: Optional[str] = None
