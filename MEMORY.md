@@ -1,13 +1,20 @@
 # Memory
 
 ## Technical Stack
-- **Personal Assistant Platform**: Hermes Agent v0.18.2 (running on Abacus AI SuperComputer, migrated 2026-07-30)
-- **SuperComputer**: IP 208.122.8.11, port 9119 (Hermes Gateway), port 8787 (Bridge API), $10/mo
+- **Personal Assistant Platform**: Hermes Agent v0.20.0 Herald (running on Abacus AI SuperComputer, migrated 2026-07-30, upgraded 2026-08-06)
+- **SuperComputer**: IP 208.122.8.11, port 22 (SSH, blocked at infra level), port 9119 (Hermes Gateway), port 8787 (Bridge API), $10/mo
+  - **Cloudflare Tunnel**: systemd quick tunnel → `https://rent-cognitive-biblical-creations.trycloudflare.com` (URL changes on restart, check `sudo journalctl -u cloudflared`)
+  - **Bridge API Key**: `X-Bridge-Key: UCn0ayC8rB8VS0s3JhdZ7YsNBfzga5jxNF2PhX4qBeM`
+  - **SSH**: Key authorized for `ubuntu` user, sshd on port 22, but Abacus infra blocks inbound port 22. Use tunnel+bridge instead.
+  - **Hevy Webhook**: POST /webhook/hevy on bridge server, subscribed at hevy.com/settings?developer
 - **Agent Name**: Allie (previously Abbie on OpenClaw)
 - **Main Model**: deepseek/deepseek-v4-flash via OpenRouter
 - **Fallback Model**: anthropic/claude-sonnet-4-6
 - **Auxiliary Models**: gemini-3.5-flash via local endpoint (localhost:8081) — handles compression, vision, web_extract, session_search, approval
-- **Local LLM**: Gemma 4 E4B IT Q4_K_M via llama.cpp (localhost:8082) — sensitive crons (finance, tax). ~5-6 tok/s generation (upgraded from Qwen3-4B on 2026-07-31). Draft model: Gemma 4 E2B staged for speculative decoding.
+- **Local LLM**: Gemma 4 E4B IT Q4_K_M via llama.cpp (localhost:8082) — sensitive crons (finance, tax). ~5-6 tok/s generation. Draft model: Gemma 4 E2B at `/home/ubuntu/.local/models/gemma-4-E2B-it-Q4_K_M.gguf` (3.1 GB), ready for speculative decoding test.
+  - **MCP SDK**: v1.29.0 (v2.0 breaks claude-agent-sdk dependency — stateless migration blocked until upstream fix)
+  - **Approvals allowlist**: `python3 *`, `Check *` auto-approved. Circuit breaker active.
+  - **Cron structured outputs**: 6 crons write JSON to `~/.hermes/cron_outputs/` for reliable inter-skill data flow (added 2026-08-08)
 - **TTS**: Edge TTS (Aria voice), fallbacks: ElevenLabs, OpenAI, xAI, Mistral
 - **Process Manager**: supervisord
 - **Terminal**: Docker container (nikolaik/python3.11-nodejs20) with persistent shell
