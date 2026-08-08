@@ -267,6 +267,23 @@ def generate_tax_dashboard(income_data, deductions, brackets):
   - Current Recommendation: [Standard / Itemize]
   - View details in Notion: [Link]
   ```
+- **Structured Output**: Write machine-readable JSON for downstream skill consumption.
+  - **Path**: `~/.hermes/cron_outputs/tx2_deductions_latest.json`
+  - **Schema**:
+    ```json
+    {
+      "month": "YYYY-MM",
+      "deductions_found": [
+        {"merchant": "name", "amount": 0.00, "category": "Charitable", "match_method": "plaid_ai|merchant_pattern|manual"}
+      ],
+      "total_deductible": 0.00,
+      "ytd_deductible": 0.00,
+      "standard_deduction": 30000,
+      "itemized_vs_standard": "itemize|standard|too_close",
+      "timestamp": "ISO8601"
+    }
+    ```
+  - **Consumers**: `financial-planner` (tax optimization recommendations), `life-score` (financial domain).
 
 ### TX3: Quarterly Tax Dashboard
 - **Schedule**: 1st of Apr, Jul, Oct, Jan at 8:00 PM CT

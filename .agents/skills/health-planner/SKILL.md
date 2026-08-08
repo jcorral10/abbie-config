@@ -1073,11 +1073,50 @@ This skill adds 6 new cron jobs. These are IN ADDITION to the 4 crons in `health
 - **Schedule**: Sunday 7:15 PM CT
 - **Model**: Gemini 2.5 Flash
 - **Action**: Run Module A: plateau detection for all exercises performed this week, muscle group frequency analysis (7-day window), weekly volume tracking vs 4-week rolling average. Append insights to weekly training summary from H3.
+- **Structured Output**: Write machine-readable JSON for downstream skill consumption.
+  - **Path**: `~/.hermes/cron_outputs/training_intel_latest.json`
+  - **Schema**:
+    ```json
+    {
+      "week_start": "YYYY-MM-DD",
+      "workouts_this_week": 0,
+      "plateaus": [{"exercise": "name", "stuck_at": "weight x reps", "sessions_flat": 3}],
+      "frequency_gaps": ["muscle groups not hit in 7+ days"],
+      "frequency_overtraining": ["muscle groups hit 3+ times"],
+      "volume_trend": "increasing|stable|decreasing",
+      "training_score": 0-100,
+      "timestamp": "ISO8601"
+    }
+    ```
+  - **Consumers**: `health-planner` Module D (training score component), `life-score` (health domain).
 
 ### H7. Composite Health Score
 - **Schedule**: 1st of month, 8:30 PM CT
 - **Model**: Gemini 2.5 Flash
 - **Action**: Execute Module D full scoring across all 8 metrics. Create Health Snapshots DB row with component scores. Calculate MoM change vs previous snapshot. Send comprehensive report via Google Chat.
+- **Structured Output**: Write machine-readable JSON for downstream skill consumption.
+  - **Path**: `~/.hermes/cron_outputs/health_score_latest.json`
+  - **Schema**:
+    ```json
+    {
+      "month": "YYYY-MM",
+      "composite_score": 0-100,
+      "component_scores": {
+        "training": 0-100,
+        "overload": 0-100,
+        "sleep": 0-100,
+        "body_comp": 0-100,
+        "supplement": 0-100,
+        "recovery": 0-100,
+        "cardio": 0-100,
+        "lab": 0-100
+      },
+      "mom_change": -100 to 100,
+      "top_action": "highest-impact recommendation",
+      "timestamp": "ISO8601"
+    }
+    ```
+  - **Consumers**: `life-score` (health domain score), future health dashboard.
 
 ### H8. Biomarker Trend Report
 - **Schedule**: Triggered when new labs entered (not scheduled — fires on Lab Results DB update)

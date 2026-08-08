@@ -129,8 +129,25 @@ See the "Cron Automations" section below for all 7 jobs.
   Groceries:  $XXX / $127  [🟢🟡🔴]
   Household:  $XXX / $69   [🟢🟡🔴]
   ...
-  Monthly pace: $X,XXX / $2,000 target
-  ```
+   Monthly pace: $X,XXX / $2,000 target
+   ```
+- **Structured Output**: Write machine-readable JSON for downstream skill consumption.
+  - **Path**: `~/.hermes/cron_outputs/weekly_cost_review_latest.json`
+  - **Schema**:
+    ```json
+    {
+      "week_start": "YYYY-MM-DD",
+      "week_end": "YYYY-MM-DD",
+      "categories": [
+        {"name": "Dining", "spent": 0.00, "budget": 115.00, "status": "green|yellow|red"}
+      ],
+      "total_spent": 0.00,
+      "monthly_pace": 0.00,
+      "monthly_target": 2000.00,
+      "timestamp": "ISO8601"
+    }
+    ```
+  - **Consumers**: `financial-planner` (cash flow forecast), `life-score` (financial health input).
 
 ### 2. Dining Tripwire Alert
 - **Schedule**: Daily 9:00 PM CT
@@ -166,6 +183,24 @@ See the "Cron Automations" section below for all 7 jobs.
 - **Schedule**: Daily 10:00 PM CT
 - **Model**: Kimi K2.6
 - **Action**: See "PDF Statement Processing" section above.
+- **Structured Output**: Write processing summary for audit trail.
+  - **Path**: `~/.hermes/cron_outputs/monthly_financial_latest.json`
+  - **Schema**:
+    ```json
+    {
+      "month": "YYYY-MM",
+      "account_balances": [
+        {"account": "Chase Checking", "balance": 0.00, "type": "checking"}
+      ],
+      "spending_summary": {"Dining": 0.00, "Groceries": 0.00},
+      "budget_adherence": 0-100,
+      "new_merchants_cached": 0,
+      "transactions_imported": 0,
+      "financial_health_score": 0-100,
+      "timestamp": "ISO8601"
+    }
+    ```
+  - **Consumers**: `financial-planner` (net worth, health score), `life-score` (financial domain score).
 
 ---
 

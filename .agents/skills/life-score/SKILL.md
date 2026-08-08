@@ -213,6 +213,36 @@ def analyze_trend_and_focus(history, current_scores, weights):
   💡 Recommendation: {actionable_advice_based_on_focus}
   ```
 
+- **Structured Output**: In addition to the Telegram message, write a machine-readable JSON file for downstream skill consumption.
+  - **Path**: `~/.hermes/cron_outputs/ls1_latest.json`
+  - **Schema**:
+    ```json
+    {
+      "month": "YYYY-MM",
+      "composite_score": 0-100,
+      "domain_scores": {
+        "financial": 0-100,
+        "health": 0-100,
+        "growth": 0-100,
+        "business": 0-100,
+        "career": 0-100
+      },
+      "weights": {
+        "financial": 0.0-1.0,
+        "health": 0.0-1.0,
+        "growth": 0.0-1.0
+      },
+      "trend": "Rising|Stable|Declining",
+      "mom_change": -100 to 100,
+      "top_win": "domain name",
+      "top_focus": "domain name",
+      "milestones": ["milestone strings if triggered"],
+      "timestamp": "ISO8601"
+    }
+    ```
+  - **Write**: After sending the Telegram message, write this JSON file. Overwrite any existing file at that path.
+  - **Consumers**: `financial-planner` (reads composite for cross-reference), future dashboard skills.
+
 ---
 
 ## Interpretation Guidelines
