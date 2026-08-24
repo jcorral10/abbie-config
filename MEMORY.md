@@ -220,21 +220,23 @@
 - **Bridge Observability**: Added 5 new endpoints (cron-report, cron-reports, files/list, metrics) + request counter middleware to bridge server; 3 new client commands (reports, ls, metrics)
 - **Bridge SSL Fix**: Added ssl.CERT_NONE context + 30s timeout to bridge.py for Cloudflare tunnel compatibility
 
-### 2026-08-24: Bot Mode Activation (Phase 1)
+### 2026-08-24: Bot Mode Activation
 - **Decision**: Split monolithic Allie into specialist bot profiles using Hermes Bot Mode
 - **Profiles Created**:
-  - `default` (Allie coordinator) — deepseek-v4-flash — routes requests, project board, life score, calendar, #invent
-  - `finance-bot` — llama-local — financial-automation, financial-planner, plaid-budget-sentinel, tax-planner
-  - `health-bot` — gemini-local — health-automation, health-planner (Hevy, labs, supplements)
-  - `home-bot` — gemini-local — home-maintenance, travel-planner
-  - `storefront-bot` — deepseek-v4-flash — digital-storefront-automation, digital-storefront-planner
-  - `market-bot` — deepseek-v4-flash — stock-*, world-intelligence, Robinhood MCP (exclusive)
+  - `default` (Allie coordinator) — deepseek-v4-flash — routes requests, project board, life score, calendar — 3 crons
+  - `finance-bot` — llama-local (Gemma 4 E4B, port 8082) 🔒 PII safe — 6 crons
+  - `health-bot` — gemini-local (port 8081 down, falls back to deepseek) — 5 crons
+  - `home-bot` — gemini-local (same fallback) — 3 crons
+  - `storefront-bot` — deepseek-v4-flash — 0 crons (pending Etsy API keys)
+  - `market-bot` — deepseek-v4-flash, Robinhood MCP (exclusive) — 1 cron
+- **Total**: 17 bot-profile crons + 1 system monitor on default
 - **Config**: `agent.bot_mode_protocol: true` in config.yaml
-- **SOUL Files**: `bot-souls/` directory in repo, installed to each profile's `SOUL.md`
-- **Coordinator Pattern**: Default profile delegates via `message_agent(target="<bot>", message="...")`
-- **Script**: `scripts/bot-mode-activate.sh` — idempotent, rollback via `hermes profile delete <name> --yes`
-- **Commit**: c4aeb54
-- **Pending**: Phase 2 cron migration (move existing crons to bot-namespaced format under specialist profiles)
+- **SOUL Files**: `bot-souls/` directory in repo, installed to each profile
+- **Model Pinning Fix**: finance-bot provider corrected to llama-local (was falling through to OpenRouter)
+- **n8n Acknowledged**: Morning Briefing, Smart Notion Relay, HA Event Reactor on Mac Mini (192.168.1.143:5678) — not duplicated
+- **CAL2**: Scoped to smart conflict detection only (n8n sends raw calendar/weather at 7 AM)
+- **Scripts**: `scripts/bot-mode-activate.sh` (Phase 1), `scripts/bot-mode-cron-migrate.sh` (Phase 2)
+- **Commits**: c4aeb54, 1a41c30, e4206c3, 00c2ec5
 
 ### 2026-08-24: Repo Transfer
 - **Decision**: Transferred `abbie-config` repo from `joncorral-Hills` to `jcorral10` (personal account)
