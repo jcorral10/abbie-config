@@ -3,7 +3,7 @@
 ## Technical Stack
 - **Personal Assistant Platform**: Hermes Agent v0.20.0 Herald (running on Abacus AI SuperComputer, migrated 2026-07-30, upgraded 2026-08-06)
 - **SuperComputer**: IP 208.122.8.11, port 22 (SSH, blocked at infra level), port 9119 (Hermes Gateway), port 8787 (Bridge API), $10/mo
-  - **Cloudflare Tunnel**: systemd quick tunnel → `https://rent-cognitive-biblical-creations.trycloudflare.com` (URL changes on restart, check `sudo journalctl -u cloudflared`)
+  - **Cloudflare Tunnel**: systemd quick tunnel → `https://accessing-participate-hon-terminal.trycloudflare.com` (URL changes on restart, check `sudo journalctl -u cloudflared`)
   - **Bridge API Key**: `X-Bridge-Key: UCn0ayC8rB8VS0s3JhdZ7YsNBfzga5jxNF2PhX4qBeM`
   - **SSH**: Key authorized for `ubuntu` user, sshd on port 22, but Abacus infra blocks inbound port 22. Use tunnel+bridge instead.
   - **Hevy Webhook**: POST /webhook/hevy on bridge server, subscribed at hevy.com/settings?developer
@@ -211,5 +211,33 @@
 - **Script**: `scripts/gemma4-upgrade.sh` — executed by Allie in 6m 28s
 - **Deployment**: Allie also rebuilt llama.cpp from source (cmake + ggml 0.18.0) and self-patched hermes-env-operations skill
 - **n8n Evaluated and Rejected**: n8n would consume 500 MB-1 GB idle RAM (6-12% of 8 GB budget), add web UI attack surface, and create redundant orchestration layer on top of Hermes-native crons
+
+### 2026-08-16: Firecrawl "Website Not Supported" Fix
+- **Problem**: `web_search` and `web_extract` tools returned "Website Not Supported: Failed to search. You are not authorized" despite valid API key
+- **Root Cause**: Abacus AI VPS image's `/etc/environment` was overriding `FIRECRAWL_API_KEY` and `FIRECRAWL_API_URL` with a broken proxy at `routellm.abacus.ai` (HTTP 500)
+- **Fix**: (1) Upgraded `firecrawl-py` from 4.17.0 → 4.35.1, (2) Set correct `FIRECRAWL_API_KEY`, `FIRECRAWL_BASE_URL`, and `FIRECRAWL_API_URL` directly in Hermes systemd service file to override `/etc/environment`
+- **Lesson**: Always check `/etc/environment` on Abacus AI VPS images — the base image injects environment overrides that can silently hijack API keys
 - **Bridge Observability**: Added 5 new endpoints (cron-report, cron-reports, files/list, metrics) + request counter middleware to bridge server; 3 new client commands (reports, ls, metrics)
 - **Bridge SSL Fix**: Added ssl.CERT_NONE context + 30s timeout to bridge.py for Cloudflare tunnel compatibility
+
+### 2026-08-24: Bot Mode Activation (Phase 1)
+- **Decision**: Split monolithic Allie into specialist bot profiles using Hermes Bot Mode
+- **Profiles Created**:
+  - `default` (Allie coordinator) — deepseek-v4-flash — routes requests, project board, life score, calendar, #invent
+  - `finance-bot` — llama-local — financial-automation, financial-planner, plaid-budget-sentinel, tax-planner
+  - `health-bot` — gemini-local — health-automation, health-planner (Hevy, labs, supplements)
+  - `home-bot` — gemini-local — home-maintenance, travel-planner
+  - `storefront-bot` — deepseek-v4-flash — digital-storefront-automation, digital-storefront-planner
+  - `market-bot` — deepseek-v4-flash — stock-*, world-intelligence, Robinhood MCP (exclusive)
+- **Config**: `agent.bot_mode_protocol: true` in config.yaml
+- **SOUL Files**: `bot-souls/` directory in repo, installed to each profile's `SOUL.md`
+- **Coordinator Pattern**: Default profile delegates via `message_agent(target="<bot>", message="...")`
+- **Script**: `scripts/bot-mode-activate.sh` — idempotent, rollback via `hermes profile delete <name> --yes`
+- **Commit**: c4aeb54
+- **Pending**: Phase 2 cron migration (move existing crons to bot-namespaced format under specialist profiles)
+
+### 2026-08-24: Repo Transfer
+- **Decision**: Transferred `abbie-config` repo from `joncorral-Hills` to `jcorral10` (personal account)
+- **Reason**: Personal/household repo doesn't belong under work org
+- **Remote URL**: `https://github.com/jcorral10/abbie-config.git`
+- **Action needed**: Allie's VM clone also needs `git remote set-url origin https://github.com/jcorral10/abbie-config.git`
