@@ -14,6 +14,27 @@ echo "  🔄 Bot Mode — Phase 2: Cron Migration"
 echo "══════════════════════════════════════════════"
 echo ""
 
+# ─── n8n External Workflows (Mac Mini) ───────────
+echo "▶ n8n Workflows on Mac Mini (192.168.1.143:5678)"
+echo "  These run OUTSIDE Hermes — do NOT duplicate them as bot crons:"
+echo ""
+echo "  📋 Workflow 1: Morning Briefing (7 AM daily)"
+echo "     → Thermostat temps, weather, calendar → Telegram"
+echo "     ⚠️  Overlaps with: CAL2 calendar cron (calendar portion)"
+echo "     ⚠️  Overlaps with: drive-health-reader (morning system check)"
+echo ""
+echo "  📋 Workflow 2: Smart Notion Relay (every 30s)"
+echo "     → Intercepts deterministic relay tasks (ha_state, ha_trigger, shell)"
+echo "     → Only passes complex/reasoning tasks to Allie"
+echo ""
+echo "  📋 Workflow 3: HA Event Reactor (webhook-driven)"
+echo "     → Temperature alerts, presence changes, device offline → Telegram"
+echo ""
+echo "  ℹ️  CAL2 calendar cron will be created with REDUCED scope"
+echo "     (Allie handles scheduling conflicts + smart briefing;"
+echo "      n8n handles the raw calendar/weather/thermostat data push)"
+echo ""
+
 # ─── Step 1: Backup current crons ────────────────
 echo "▶ Step 1: Backing up current cron list..."
 hermes cron list > "$BACKUP_DIR/crons_before_${TIMESTAMP}.txt" 2>&1 || true
@@ -171,7 +192,7 @@ create_bot_cron "default" \
     "[bot:default] Calendar Sync" \
     "0 8 * * *" \
     "llama-local" \
-    "Run the daily calendar sync. Check Google Calendar for today's events, upcoming appointments, and scheduling conflicts. Generate the morning agenda briefing. Report via Telegram."
+    "Run the daily calendar intelligence check. NOTE: n8n on the Mac Mini already sends raw calendar events, weather, and thermostat data to Telegram at 7 AM. Your job is the SMART layer on top: detect scheduling conflicts between work and personal calendars, flag double-bookings, identify prep needed for upcoming appointments, and alert on any calendar changes since yesterday. Do NOT duplicate the raw event list that n8n already sent. Report only actionable insights via Telegram."
 
 echo ""
 
