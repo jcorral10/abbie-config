@@ -63,6 +63,7 @@ declare -A BOT_DESCRIPTIONS=(
     ["storefront-bot"]="Operates the Etsy digital product storefront: niche research, product creation, SEO optimization, listing management, mockup generation, and revenue tracking."
     ["market-bot"]="Researches stocks using fundamental, technical, and sentiment analysis. Generates weekly market briefings. Manages the Robinhood agentic trading account via MCP."
     ["invent-bot"]="Captures and analyzes invention ideas via #invent tag. Performs IP novelty screening, patent prior art searches, market viability analysis, and generates 3D models via OpenSCAD for physical prototypes."
+    ["job-bot"]="Career contingency system. Handles job searches, resume tailoring, cover letter writing, interview prep, and application tracking. Standby mode by default — activates when needed."
 )
 
 declare -A BOT_MODELS=(
@@ -72,9 +73,10 @@ declare -A BOT_MODELS=(
     ["storefront-bot"]="deepseek-v4-flash"
     ["market-bot"]="deepseek-v4-flash"
     ["invent-bot"]="deepseek-v4-flash"
+    ["job-bot"]="deepseek-v4-flash"
 )
 
-for bot in finance-bot health-bot home-bot storefront-bot market-bot invent-bot; do
+for bot in finance-bot health-bot home-bot storefront-bot market-bot invent-bot job-bot; do
     echo "  Creating $bot..."
     
     # Check if profile already exists
@@ -102,7 +104,7 @@ echo ""
 echo "▶ Phase 1d: Installing SOUL.md files..."
 
 # Install bot SOULs
-for bot in finance-bot health-bot home-bot storefront-bot market-bot invent-bot; do
+for bot in finance-bot health-bot home-bot storefront-bot market-bot invent-bot job-bot; do
     SOUL_SRC="$SOUL_DIR/${bot}.md"
     if [ -f "$SOUL_SRC" ]; then
         PROFILE_DIR="$HERMES_HOME/profiles/$bot"
