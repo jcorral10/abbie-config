@@ -224,7 +224,7 @@
 - **Decision**: Split monolithic Allie into specialist bot profiles using Hermes Bot Mode
 - **Profiles Created**:
   - `default` (Allie coordinator) — deepseek-v4-flash — routes requests, project board, life score, calendar — 3 crons
-  - `finance-bot` — llama-local (Gemma 4 E4B, port 8082) 🔒 PII safe — 6 crons
+  - `finance-bot` — deepseek-v4-flash (changed 2026-08-25, was llama-local — 18K system prompt overflowed 16K ctx). llama-local fallback for explicit PII — 6 crons
   - `health-bot` — gemini-local (port 8081 down, falls back to deepseek) — 5 crons
   - `home-bot` — gemini-local (same fallback) — 3 crons
   - `storefront-bot` — deepseek-v4-flash — 0 crons (pending Etsy API keys)
