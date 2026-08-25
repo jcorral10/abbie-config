@@ -256,4 +256,28 @@
 - **Ops Score**: Composite 0–100 metric (Uptime 25%, Cron Reliability 25%, API Health 20%, Resource Efficiency 15%, Hygiene 15%)
 - **Structured Output**: `ops_score_latest.json` for Life Score consumption (potential future 6th domain)
 - **Crons**: SH1 (heartbeat q2h), SH2 (cron audit daily 5:30AM), SH3 (API audit daily 5AM), SH4 (storage weekly Sun 5AM), SH5 (watchdog q4h), SH6 (weekly report Sun 6PM)
-- **Pending**: Push to VM via bridge, create Notion DB, register crons in config.yaml, assign Google Chat webhook
+- **Deployed**: ✅ All files pushed, Notion DB created, 6 crons registered, first heartbeat completed
+
+### 2026-08-25: Memory Audit — 85% → 19%
+- **Problem**: Memory store at 85% (1,888/2,200 chars, 11 entries) — shared across all 9 bot profiles, wasting context on bot-specific data
+- **Fix**: Removed 8 entries (duplicates, bot-specific data offloaded to soul files, stuck "m" artifact)
+- **Result**: 3 entries remain (418 chars, 19%): Project Board DB ID, Brave Search API, Cron mode workaround
+- **Offloads**: ops-bot soul ← System Health DB ID + cron refs; finance-bot soul ← financial snapshot pointer; calendar-automation resources ← Google Calendar IDs
+
+### 2026-08-25: finance-bot Model Change (llama-local → deepseek-v4-flash)
+- **Problem**: Hermes system prompt is ~18K tokens, overflows llama-local's 16K context window (90 min startup on CPU)
+- **Fix**: Changed finance-bot primary model to deepseek-v4-flash (4s response); llama-local retained as fallback for explicit PII
+- **SOUL rule preserved**: "Never send raw PII to cloud models" — Plaid data fetched locally, LLM only sees analysis
+
+### 2026-08-25: gemini-local Fix (gemini-web2api → curl-based proxy)
+- **Problem**: gemini-web2api v1.1.0 SSL/TLS negotiation fails silently with Python's httpx — port 8081 DOWN, context compression failing
+- **Fix**: Allie built curl-based proxy at `~/.local/bin/gemini-local-proxy.py` — forwards OpenAI-compatible requests to Gemini via curl subprocess
+- **Result**: Port 8081 ✅, compression working, ~60s cold start / ~2s warm
+- **Architecture**: gemini-local (8081, free Gemini proxy) + llama-local (8082, Gemma 4 E4B CPU) + deepseek-v4-flash (OpenRouter, default)
+
+### 2026-08-25: CleverCorral.com — HA Cloudflare Tunnel (IN PROGRESS)
+- **Domain**: clevercorral.com added to Cloudflare, DNS Full, SSL Active (Universal cert, expires 2026-11-23)
+- **Route Created**: `ha.clevercorral.com` → `http://localhost:8123` via Abbie2Clock tunnel (Published Application Route)
+- **Blocker**: HA Cloudflared add-on needs restart to pick up new route config — Jon needs to do this from home network
+- **After restart**: Enable Home Assistant channel in Hermes dashboard with URL `https://ha.clevercorral.com` + HA long-lived access token
+
