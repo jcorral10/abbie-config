@@ -229,7 +229,8 @@
   - `home-bot` — gemini-local (same fallback) — 3 crons
   - `storefront-bot` — deepseek-v4-flash — 0 crons (pending Etsy API keys)
   - `market-bot` — deepseek-v4-flash, Robinhood MCP (exclusive) — 1 cron
-- **Total**: 17 bot-profile crons + 1 system monitor on default
+  - `ops-bot` — gemini-local (system health, cron audit, watchdog, token analysis) — 6 crons (SH1-SH6)
+- **Total**: 23 bot-profile crons + 1 system monitor on default
 - **Config**: `agent.bot_mode_protocol: true` in config.yaml
 - **SOUL Files**: `bot-souls/` directory in repo, installed to each profile
 - **Model Pinning Fix**: finance-bot provider corrected to llama-local (was falling through to OpenRouter)
@@ -243,3 +244,16 @@
 - **Reason**: Personal/household repo doesn't belong under work org
 - **Remote URL**: `https://github.com/jcorral10/abbie-config.git`
 - **Action needed**: Allie's VM clone also needs `git remote set-url origin https://github.com/jcorral10/abbie-config.git`
+
+### 2026-08-25: ops-bot (System Health Monitor)
+- **Decision**: Add 9th specialist bot profile for infrastructure and ops monitoring
+- **New Skill**: `system-health` with 6 modules (Heartbeat Monitor, Cron Auditor, Token & API Audit, Memory & Storage Audit, Watchdog, Weekly Ops Report)
+- **Bot Profile**: `ops-bot` — gemini-local (lightweight checks don't need cloud inference)
+- **Self-Heal Policy**: Alert & Approval only — no auto-remediation, all fixes via Telegram approval buttons
+- **Token Analysis**: Tracks token consumption per bot/skill/cron, identifies optimization opportunities (model downgrades, frequency reduction, prompt compression) — does NOT enforce budget ceilings since OpenRouter auto-reloads
+- **Notion DB**: 📡 System Health DB under ALLIE page (weekly Ops Score snapshots, incident log)
+- **Cron Registry**: `resources/cron_registry.json` — master inventory of all ~51 crons across 22 skills with deployed/not-deployed status
+- **Ops Score**: Composite 0–100 metric (Uptime 25%, Cron Reliability 25%, API Health 20%, Resource Efficiency 15%, Hygiene 15%)
+- **Structured Output**: `ops_score_latest.json` for Life Score consumption (potential future 6th domain)
+- **Crons**: SH1 (heartbeat q2h), SH2 (cron audit daily 5:30AM), SH3 (API audit daily 5AM), SH4 (storage weekly Sun 5AM), SH5 (watchdog q4h), SH6 (weekly report Sun 6PM)
+- **Pending**: Push to VM via bridge, create Notion DB, register crons in config.yaml, assign Google Chat webhook
