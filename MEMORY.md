@@ -275,9 +275,13 @@
 - **Result**: Port 8081 ✅, compression working, ~60s cold start / ~2s warm
 - **Architecture**: gemini-local (8081, free Gemini proxy) + llama-local (8082, Gemma 4 E4B CPU) + deepseek-v4-flash (OpenRouter, default)
 
-### 2026-08-25: CleverCorral.com — HA Cloudflare Tunnel (IN PROGRESS)
-- **Domain**: clevercorral.com added to Cloudflare, DNS Full, SSL Active (Universal cert, expires 2026-11-23)
-- **Route Created**: `ha.clevercorral.com` → `http://localhost:8123` via Abbie2Clock tunnel (Published Application Route)
-- **Blocker**: HA Cloudflared add-on needs restart to pick up new route config — Jon needs to do this from home network
-- **After restart**: Enable Home Assistant channel in Hermes dashboard with URL `https://ha.clevercorral.com` + HA long-lived access token
+### 2026-08-26: CleverCorral.com — HA Cloudflare Tunnel (COMPLETE ✅)
+- **Domain**: clevercorral.com on Cloudflare, DNS Full, SSL Active
+- **Tunnel**: Abbie2Clock (remote-managed, token-based), connector on HA OS (linux_arm64)
+- **Route**: `ha.clevercorral.com` → `http://homeassistant.local.hass.io:8123` (configured via add-on `external_hostname`)
+- **Root Cause of 400 errors**: HA 2026.8 migrated `http` integration from YAML to `.storage/http` (`yaml_migration_done: true`). All `configuration.yaml` edits were silently ignored. Fix: edit `.storage/http` directly to add trusted_proxies
+- **Trusted Proxies** (in `.storage/http`, NOT configuration.yaml): `127.0.0.1/32`, `172.30.32.0/23`, `192.168.1.0/24`
+- **Docker network**: Add-on containers use `172.30.32.0/23` (not just `172.30.33.1`)
+- **API verified**: 364 entities accessible via `https://ha.clevercorral.com/api/states`
+- **HA Token**: In `~/.env` as `HA_TOKEN` (Long-Lived Access Token, expires ~2036)
 
