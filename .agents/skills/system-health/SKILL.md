@@ -439,7 +439,7 @@ def token_api_audit():
         {
             "name": "FMP",
             "env_var": "FMP_API_KEY",
-            "probe_url": "https://financialmodelingprep.com/api/v3/quote/AAPL",
+            "probe_url": "https://financialmodelingprep.com/stable/profile?symbol=AAPL",
             "auth_type": "query_apikey",
             "expected_status": 200,
             "critical": False
