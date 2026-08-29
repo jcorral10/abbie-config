@@ -1123,7 +1123,7 @@ def weekly_ops_report():
 
 | Cron ID | Schedule | Model | Action | Message |
 | :--- | :--- | :--- | :--- | :--- |
-| `SH1` | `0 */2 * * *` (every 2h) | gemini-local | Heartbeat Monitor | Ping all services, alert on state changes |
+| `SH1` | `0 */4 * * *` (every 4h) | **bash script** | Heartbeat Monitor | Ping all services, alert on state changes (no LLM needed) |
 | `SH2` | `30 5 * * *` (daily 5:30 AM CT) | gemini-local | Cron Auditor | Cross-reference crons, detect missed/errored, analyze token usage |
 | `SH3` | `0 5 * * *` (daily 5:00 AM CT) | gemini-local | Token & API Audit | Probe all API keys, check env conflicts, usage analysis |
 | `SH4` | `0 5 * * 0` (Sun 5:00 AM CT) | gemini-local | Memory & Storage Audit | Disk, RAM, logs, Notion sizes, SQLite, archival suggestions |

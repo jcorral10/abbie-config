@@ -662,13 +662,13 @@
       "name": "Heartbeat Monitor",
       "skill": "system-health",
       "bot": "ops-bot",
-      "schedule": "0 */2 * * *",
-      "schedule_human": "Every 2h",
-      "model": "gemini-local",
+      "schedule": "0 */4 * * *",
+      "schedule_human": "Every 4h",
+      "model": "bash-script",
       "output_file": "heartbeat_state.json",
       "deployed": false,
       "critical": true,
-      "not_deployed_reason": "NEW — pending ops-bot activation"
+      "not_deployed_reason": "UPDATED — bash script ready, needs VM cron update"
     },
     {
       "id": "SH2",
