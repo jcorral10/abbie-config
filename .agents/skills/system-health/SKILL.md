@@ -708,9 +708,36 @@ def memory_storage_audit():
     # Memory limit: 2,200 chars (memory store) + 1,375 chars (user profile)
     # Check current usage against limits
     
+    # 7. MEMORY.md health check (context budget guard)
+    memory_md_size = get_file_size("~/abbie-config/MEMORY.md")
+    memory_md_kb = memory_md_size / 1024
+    if memory_md_kb > 10:
+        alerts.append(f"⚠️ MEMORY.md is {memory_md_kb:.1f} KB (target: < 5 KB). Archive completed ADRs to memory/archive.md")
+    elif memory_md_kb > 5:
+        recommendations.append(f"📝 MEMORY.md is {memory_md_kb:.1f} KB — approaching 5 KB target. Review for stale entries.")
+    
+    # Count ADR entries older than 30 days
+    adr_count = count_adrs_older_than_days("~/abbie-config/MEMORY.md", days=30)
+    if adr_count > 0:
+        recommendations.append(f"📦 {adr_count} ADR entries older than 30 days in MEMORY.md — archive to memory/archive.md")
+    
+    # 8. Daily log archival check
+    old_daily_logs = count_files_older_than("~/abbie-config/memory/", pattern="20*.md", days=14)
+    if old_daily_logs > 0:
+        recommendations.append(
+            f"📋 {old_daily_logs} daily logs older than 14 days — "
+            f"run: bash ~/abbie-config/scripts/rotate_logs.sh"
+        )
+    
+    # 9. Llama-server on-demand status
+    llama_status = run_command("bash ~/abbie-config/scripts/llama-on-demand.sh status")
+    # Include in audit report for visibility
+    
     audit_result = {
         "disk_free_gb": system["disk_free_gb"],
         "ram_used_pct": system["memory_used_pct"],
+        "memory_md_kb": round(memory_md_kb, 1),
+        "llama_status": llama_status,
         "alerts": alerts,
         "recommendations": recommendations,
         "stale_outputs": stale_files,

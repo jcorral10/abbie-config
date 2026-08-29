@@ -36,12 +36,12 @@
 - **MCP**: Native MCP client for stdio/HTTP servers
 
 ## Hermes Config Highlights
-- Max turns per session: 90
+- Max turns per session: 60 ← was 90
 - Gateway timeout: 30 min
 - Approvals: smart mode (auto-approve safe ops, buttons for destructive)
 - Cron approval mode: deny (no auto-execute)
 - Delegation: max 3 parallel subagents, max spawn depth 1
-- Context compression: enabled (40% threshold, 15% target, 400 msg hard limit)
+- Context compression: enabled (35% threshold, 15% target, 200 msg hard limit) ← was 40%/400
 - Memory: 2,200 chars (memory store) + 1,375 chars (user profile)
 - Security: Tirith policy engine enabled
 - Fallback providers chain: OpenRouter → Anthropic
