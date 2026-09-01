@@ -116,3 +116,14 @@
 - **Root Cause of 400 errors**: HA 2026.8 migrated `http` to `.storage/http`
 - **Trusted Proxies** (in `.storage/http`): `127.0.0.1/32`, `172.30.32.0/23`, `192.168.1.0/24`
 - **API verified**: 364 entities accessible
+
+### 2026-09-01: Bot Mode Collapsed — Single Profile Restoration
+- **Decision**: Reversed the Aug 24 bot-mode split. Collapsed 9 profiles back to single default profile.
+- **Root Cause**: 8 days of cascading failures traced to per-profile isolation: stale-exec deadlocks across separate SQLite DBs, provider drift lockouts, circular monitoring (ops-bot couldn't monitor itself), Claude credit drain ($50), silent cron failures.
+- **New Architecture**: Single profile, 17 tagged crons (down from 23), `bot_mode_protocol: false`
+- **Model Policy**: gemini-local default; deepseek for finance, personal health, and complex synthesis
+- **Cron Changes**: Removed TX1 tax cron. Combined fitness + training into one report. Combined SH1–SH5 into single daily health check.
+- **System Jobs**: Stale-exec sweeper + heartbeat moved to system crontab (immune to Hermes failures, zero tokens)
+- **SOUL**: Unified soul retains coordinator domain-routing pattern without inter-agent delegation
+- **Scripts**: `cron-consolidate.sh` (deployment), `bot-mode-activate.sh` + `bot-mode-cron-migrate.sh` archived to `scripts/archive/`
+- **Lesson**: Hermes profiles are designed for conversational isolation, not cron isolation. Crons are stateless one-shots that benefit from a single reliable execution path, not 9 fragile ones.

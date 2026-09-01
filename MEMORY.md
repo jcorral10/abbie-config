@@ -88,18 +88,19 @@
 - **Northwestern Mutual**: Whole life/IBC, $1M/30yr, $95.46/mo
 - **Investments**: Schwab ($10/mo), Jack Custodial IRA ($3/mo), Jaime 401k (Alight), Jon 401k (TBD)
 
-### Active Crons Summary
-See `resources/cron_registry.json` for full registry (45 definitions, 24 deployed).
-- **default**: LS1 (Life Score), CAL2 (Calendar Conflict)
-- **finance-bot**: 8 crons (monthly update, Plaid sync, spending digest, subscriptions, unbudgeted, category health, emergency fund, cost review + 3 tax crons)
-- **health-bot**: 8 crons (Hevy sync, body metrics, training summary, supplement reorder, recovery, training intel, health score, drive health reader)
-- **home-bot**: 2 crons (weekly + seasonal maintenance)
-- **market-bot**: 1 cron (stock weekly briefing)
-- **ops-bot**: 6 crons (SH1–SH6: heartbeat, cron audit, API audit, storage audit, watchdog, weekly report)
+### Active Crons Summary (Post-Consolidation Sep 1, 2026)
+Single profile, 17 Hermes crons + 2 system crontab jobs. See `configs/model_routing.yaml`.
+- **[FIN]**: 5 crons (Plaid sync, cost review, monthly update, TX2 quarterly, TX3 annual)
+- **[HEALTH]**: 3 crons (Hevy sync, body metrics, weekly fitness & training report)
+- **[HOME]**: 3 crons (travel watch, weekly maint, seasonal prep)
+- **[MKT]**: 1 cron (stock weekly briefing)
+- **[OPS]**: 2 crons (daily system health check, weekly ops report)
+- **[DEFAULT]**: 2 crons (LS1 life score, CAL2 calendar intel) + stale sweeper (system crontab)
 
 ### Key Architecture Facts
-- **Bot Mode**: 9 profiles, `agent.bot_mode_protocol: true`
-- **Models**: deepseek-v4-flash (primary, OpenRouter), gemini-local (8081, free proxy), llama-local (8082, Gemma 4 E4B 4.0 GB)
+- **Architecture**: Single profile (default), `agent.bot_mode_protocol: false`
+- **Models**: deepseek-v4-flash (primary, OpenRouter), gemini-local (8081, free proxy), llama-local (8082, Gemma 4 E4B — interactive-only)
+- **Model Policy**: gemini-local default; deepseek for finance, personal health, and complex synthesis
 - **Bridge**: FastAPI on port 8787, Cloudflare tunnel, Notion as fallback
 - **Robinhood MCP**: Allie = primary trader (approval-gated), Antigravity = suggestion mode only
 - **HA Tunnel**: `ha.clevercorral.com` → HA instance, 364 entities, token in `~/.env`
