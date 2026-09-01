@@ -77,22 +77,24 @@ delete_all_crons_for_profile() {
         profile_flag="-p $profile"
     fi
 
-    # Get cron IDs — hermes cron list output format may vary
+    # Get cron IDs — try JSON first, then fall back to text parsing
     local cron_ids
-    cron_ids=$(hermes $profile_flag cron list 2>/dev/null | grep -oP 'id:\s*\K\S+' || true)
-
-    if [ -z "$cron_ids" ]; then
-        # Try alternate parsing (JSON or table format)
-        cron_ids=$(hermes $profile_flag cron list --json 2>/dev/null | python3 -c "
+    cron_ids=$(hermes $profile_flag cron list --json 2>/dev/null | python3 -c "
 import sys, json
 try:
     data = json.load(sys.stdin)
-    crons = data if isinstance(data, list) else data.get('crons', [])
+    crons = data if isinstance(data, list) else data.get('crons', data.get('jobs', []))
     for c in crons:
-        print(c.get('id', ''))
+        cid = c.get('id', c.get('cron_id', ''))
+        if cid:
+            print(cid)
 except:
     pass
 " 2>/dev/null || true)
+
+    # Fallback: try plain text parsing with multiple patterns
+    if [ -z "$cron_ids" ]; then
+        cron_ids=$(hermes $profile_flag cron list 2>/dev/null | grep -oE '^\s*[0-9]+' | tr -d ' ' || true)
     fi
 
     if [ -z "$cron_ids" ]; then
@@ -129,8 +131,8 @@ create_cron() {
     echo "  📋 $name"
     echo "     Schedule: $schedule | Model: $(basename $model)"
 
-    hermes cron create "$name" \
-        --schedule "$schedule" \
+    # Hermes CLI: schedule is positional, not a flag
+    hermes cron create "$name" "$schedule" \
         --model "$model" \
         --prompt "$prompt" 2>/dev/null && echo "     ✅ Created" || echo "     ❌ Failed"
 }
