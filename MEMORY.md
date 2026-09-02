@@ -88,8 +88,8 @@
 - **Northwestern Mutual**: Whole life/IBC, $1M/30yr, $95.46/mo
 - **Investments**: Schwab ($10/mo), Jack Custodial IRA ($3/mo), Jaime 401k (Alight), Jon 401k (TBD)
 
-### Active Crons Summary (Post-Consolidation Sep 1, 2026)
-Single profile, 17 Hermes crons + 2 system crontab jobs. See `configs/model_routing.yaml`.
+### Active Crons Summary (v2 — Sep 2, 2026)
+Orchestrator (default) owns all 16 crons + 2 system crontab jobs. Specialists have ZERO crons.
 - **[FIN]**: 5 crons (Plaid sync, cost review, monthly update, TX2 quarterly, TX3 annual)
 - **[HEALTH]**: 3 crons (Hevy sync, body metrics, weekly fitness & training report)
 - **[HOME]**: 3 crons (travel watch, weekly maint, seasonal prep)
@@ -97,13 +97,15 @@ Single profile, 17 Hermes crons + 2 system crontab jobs. See `configs/model_rout
 - **[OPS]**: 2 crons (daily system health check, weekly ops report)
 - **[DEFAULT]**: 2 crons (LS1 life score, CAL2 calendar intel) + stale sweeper (system crontab)
 
-### Key Architecture Facts
-- **Architecture**: Single profile (default), `agent.bot_mode_protocol: false`
-- **Models**: deepseek-v4-flash (primary, OpenRouter), gemini-local (8081, free proxy), llama-local (8082, Gemma 4 E4B — interactive-only)
-- **Model Policy**: gemini-local default; deepseek for finance, personal health, and complex synthesis
+### Key Architecture Facts (v2)
+- **Architecture**: Orchestrator + 8 specialists, `bot_mode_protocol: true`
+- **Orchestrator**: default profile, all crons, 6 skills (project-board, life-score, calendar, work-context-handoff, allie-skill-builder, system-health)
+- **Specialists**: finance-bot, health-bot, market-bot, home-bot, plant-bot, work-bot, osint-bot, invent-bot — zero crons, pruned skills, on-demand via `message_agent()`
+- **Models**: deepseek (orchestrator, finance, health), gemini-local (market, home, plant, work, osint, invent)
+- **Cross-bot**: Peers communicate via `message_agent()` — Finance↔Market, Invent→OSINT, Invent→Home, Home↔Plant
 - **Bridge**: FastAPI on port 8787, Cloudflare tunnel, Notion as fallback
-- **Robinhood MCP**: Allie = primary trader (approval-gated), Antigravity = suggestion mode only
-- **HA Tunnel**: `ha.clevercorral.com` → HA instance, 364 entities, token in `~/.env`
+- **Robinhood MCP**: Market Bot = primary trader (approval-gated), Antigravity = suggestion mode only
+- **HA**: `ha.clevercorral.com` → 364 entities, Home Bot manages via n8n webhooks
 - **Repo**: `https://github.com/jcorral10/abbie-config.git`
 
 ## Long-Term User Preferences

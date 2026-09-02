@@ -127,3 +127,14 @@
 - **SOUL**: Unified soul retains coordinator domain-routing pattern without inter-agent delegation
 - **Scripts**: `cron-consolidate.sh` (deployment), `bot-mode-activate.sh` + `bot-mode-cron-migrate.sh` archived to `scripts/archive/`
 - **Lesson**: Hermes profiles are designed for conversational isolation, not cron isolation. Crons are stateless one-shots that benefit from a single reliable execution path, not 9 fragile ones.
+
+### 2026-09-02: v2 Bot Fleet — Orchestrator + 8 Specialists
+- **Decision**: Re-introduce specialist bot profiles with a fundamentally different architecture than v1.
+- **Key Change**: Specialists have ZERO crons. All scheduling stays on the orchestrator (default profile). Specialists are activated on-demand via `message_agent()` for interactive queries and complex cron delegation.
+- **Specialists**: finance-bot (deepseek), health-bot (deepseek), market-bot (gemini-local), home-bot (gemini-local+n8n), plant-bot (gemini-local), work-bot (gemini-local), osint-bot (gemini-local), invent-bot (gemini-local)
+- **New Domains**: Plant & Garden (lawn/fertilizer/watering), OSINT/Security (people search, digital footprint), Work (goals, salary, monday.com)
+- **Orchestrator Pruned**: Only 6 skills (project-board, life-score, calendar, work-context-handoff, allie-skill-builder, system-health). Domain skills live with specialists.
+- **Cross-Bot Communication**: `bot_mode_protocol: true` enables peer-to-peer message_agent() — Finance↔Market, Invent→OSINT, Invent→Home, Home↔Plant
+- **Memory Model**: Total persistent memory expanded from 2,200 to 19,800 chars (9 × 2,200). Orchestrator context window 3-4x smaller (6 skills vs 22).
+- **New Skills Needed**: plant-garden, home-hub, work-ops, osint-recon
+- **Lesson**: The v1 failure was coupling scheduling to profile isolation. v2 separates the execution plane (orchestrator owns the clock) from the delegation plane (specialists own the expertise).
