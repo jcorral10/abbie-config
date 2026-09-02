@@ -23,8 +23,11 @@ REPO_DIR="$SCRIPT_DIR/.."
 CONFIG_FILE="$HERMES_HOME/config.yaml"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 
-# Model aliases
-DEEPSEEK="openrouter/deepseek/deepseek-v4-flash"
+# Model aliases — Hermes uses model.default + model.provider, not combined strings
+# For deepseek: model.default=deepseek/deepseek-v4-flash, model.provider=openrouter
+# For gemini-local: model.default=gemini-local (local proxy, no provider)
+DEEPSEEK_MODEL="deepseek/deepseek-v4-flash"
+DEEPSEEK_PROVIDER="openrouter"
 GEMINI="gemini-local"
 
 echo "══════════════════════════════════════════════"
@@ -70,22 +73,23 @@ echo ""
 # ─── Phase 2: Create specialist profiles ──────────
 echo "▶ Phase 2: Creating specialist profiles..."
 
-# Define specialists: name|model|skills (pipe-delimited)
+# Define specialists: name|model|provider|skills (pipe-delimited)
+# provider is empty for gemini-local (local proxy)
 declare -a SPECIALISTS=(
-    "finance-bot|${DEEPSEEK}|financial-automation,financial-planner,plaid-budget-sentinel,tax-planner"
-    "health-bot|${DEEPSEEK}|health-automation,health-planner"
-    "market-bot|${GEMINI}|stock-fundamentals,stock-technicals,stock-sentiment,stock-market-macro,stock-weekly-briefing"
-    "home-bot|${GEMINI}|home-maintenance,travel-planner"
-    "plant-bot|${GEMINI}|"
-    "work-bot|${GEMINI}|work-context-handoff"
-    "osint-bot|${GEMINI}|"
-    "invent-bot|${GEMINI}|invention-processor"
+    "finance-bot|${DEEPSEEK_MODEL}|${DEEPSEEK_PROVIDER}|financial-automation,financial-planner,plaid-budget-sentinel,tax-planner"
+    "health-bot|${DEEPSEEK_MODEL}|${DEEPSEEK_PROVIDER}|health-automation,health-planner"
+    "market-bot|${GEMINI}||stock-fundamentals,stock-technicals,stock-sentiment,stock-market-macro,stock-weekly-briefing"
+    "home-bot|${GEMINI}||home-maintenance,travel-planner"
+    "plant-bot|${GEMINI}||"
+    "work-bot|${GEMINI}||work-context-handoff"
+    "osint-bot|${GEMINI}||"
+    "invent-bot|${GEMINI}||invention-processor"
 )
 
 for spec in "${SPECIALISTS[@]}"; do
-    IFS='|' read -r name model skills <<< "$spec"
+    IFS='|' read -r name model provider skills <<< "$spec"
 
-    echo "  📋 $name (model: $(basename "$model"))"
+    echo "  📋 $name (model: $model, provider: ${provider:-local})"
 
     # Create profile if it doesn't exist
     if hermes profile list 2>/dev/null | grep -q "$name"; then
@@ -109,10 +113,16 @@ for spec in "${SPECIALISTS[@]}"; do
         echo "     ⚠️  SOUL not found at $SOUL_SRC"
     fi
 
-    # Pin model
-    hermes -p "$name" config set model "$model" 2>/dev/null && \
-        echo "     ✅ Model pinned: $(basename "$model")" || \
-        echo "     ⚠️  Could not pin model via CLI"
+    # Pin model (use model.default + model.provider for Hermes format)
+    hermes -p "$name" config set model.default "$model" 2>/dev/null && \
+        echo "     ✅ Model set: $model" || \
+        echo "     ⚠️  Could not set model via CLI"
+
+    if [ -n "$provider" ]; then
+        hermes -p "$name" config set model.provider "$provider" 2>/dev/null && \
+            echo "     ✅ Provider set: $provider" || \
+            echo "     ⚠️  Could not set provider via CLI"
+    fi
 
     # Configure allowed skills (if any specified)
     if [ -n "$skills" ]; then
