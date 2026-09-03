@@ -97,12 +97,12 @@ Orchestrator (default) owns all 16 crons + 2 system crontab jobs. Specialists ha
 - **[OPS]**: 2 crons (daily system health check, weekly ops report)
 - **[DEFAULT]**: 2 crons (LS1 life score, CAL2 calendar intel) + stale sweeper (system crontab)
 
-### Key Architecture Facts (v2)
-- **Architecture**: Orchestrator + 8 specialists, `bot_mode_protocol: true`
+### Key Architecture Facts (v2.1)
+- **Architecture**: Orchestrator + 10 specialists, `bot_mode_protocol: true`
 - **Orchestrator**: default profile, all crons, 6 skills (project-board, life-score, calendar, work-context-handoff, allie-skill-builder, system-health)
-- **Specialists**: finance-bot, health-bot, market-bot, home-bot, plant-bot, work-bot, osint-bot, invent-bot — zero crons, pruned skills, on-demand via `message_agent()`
-- **Models**: deepseek (orchestrator, finance, health), gemini-local (market, home, plant, work, osint, invent)
-- **Cross-bot**: Peers communicate via `message_agent()` — Finance↔Market, Invent→OSINT, Invent→Home, Home↔Plant
+- **Specialists**: finance-bot, health-bot, market-bot, home-bot, plant-bot, work-bot, osint-bot, invent-bot, job-bot, travel-bot — zero crons, pruned skills, on-demand via CLI wrappers
+- **Models**: deepseek (orchestrator, finance, health, job), gemini-local (market, home, plant, work, osint, invent, travel)
+- **Cross-bot**: Peers communicate via CLI wrappers — Finance↔Market, Invent→OSINT, Invent→Home, Home↔Plant, Job→Finance/Work
 - **Bridge**: FastAPI on port 8787, Cloudflare tunnel, Notion as fallback
 - **Robinhood MCP**: Market Bot = primary trader (approval-gated), Antigravity = suggestion mode only
 - **HA**: `ha.clevercorral.com` → 364 entities, Home Bot manages via n8n webhooks

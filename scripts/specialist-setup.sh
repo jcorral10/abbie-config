@@ -79,11 +79,13 @@ declare -a SPECIALISTS=(
     "finance-bot|${DEEPSEEK_MODEL}|${DEEPSEEK_PROVIDER}|financial-automation,financial-planner,plaid-budget-sentinel,tax-planner"
     "health-bot|${DEEPSEEK_MODEL}|${DEEPSEEK_PROVIDER}|health-automation,health-planner"
     "market-bot|${GEMINI}||stock-fundamentals,stock-technicals,stock-sentiment,stock-market-macro,stock-weekly-briefing"
-    "home-bot|${GEMINI}||home-maintenance,travel-planner,home-hub"
+    "home-bot|${GEMINI}||home-maintenance,home-hub"
     "plant-bot|${GEMINI}||plant-garden"
     "work-bot|${GEMINI}||work-context-handoff,work-ops"
     "osint-bot|${GEMINI}||osint-recon"
     "invent-bot|${GEMINI}||invention-processor"
+    "job-bot|${DEEPSEEK_MODEL}|${DEEPSEEK_PROVIDER}|job-search-ops"
+    "travel-bot|${GEMINI}||travel-planner"
 )
 
 for spec in "${SPECIALISTS[@]}"; do
