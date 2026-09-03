@@ -46,6 +46,7 @@ job-search-ops (NEW)
 - `market-bot chat -q "..."` — stock options / equity compensation analysis
 - `home-bot chat -q "..."` — relocation implications
 - `work-bot chat -q "..."` — current role context, projects, goals for comparison
+- `osint-bot chat -q "..."` — find hiring manager emails, recruiter contacts, company decision-makers
 
 ## Model
 deepseek-v4-flash — resume optimization and cover letter writing need strong language capabilities.

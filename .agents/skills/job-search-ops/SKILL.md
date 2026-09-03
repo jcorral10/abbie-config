@@ -240,6 +240,11 @@ Negotiation Points:
 - `market-bot chat -q "..."` — equity/stock option valuation
 - `home-bot chat -q "..."` — relocation cost analysis
 - `work-bot chat -q "..."` — current role context for comparison
+- `osint-bot chat -q "Find the hiring manager for [role] at [company]"` — discover recruiter emails, hiring manager contacts, engineering leads. Use for:
+  - Cold outreach to hiring managers (bypass recruiter gatekeeping)
+  - Identifying who to address cover letters to
+  - Finding mutual connections at target companies
+  - Verifying recruiter legitimacy
 
 ## 9. Notion DB Setup
 
