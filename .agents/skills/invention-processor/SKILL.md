@@ -75,12 +75,14 @@ If adding properties to the INVENT database, these are ideal:
 | Name | Title | Idea name/title |
 | Description | Rich Text | One-paragraph summary |
 | Category | Select | See `resources/idea_categories.json` |
-| Status | Select | New → Analyzed → Refined → Parked → Pursuing |
+| Stage | Select | `💡 Raw` → `🔍 Analyze` → `✅ Validated` → `📦 Shelved` |
 | IP Score | Number | 1-10 novelty assessment |
 | Market Score | Number | 1-10 viability assessment |
 | Related Ideas | Relation | Links to similar ideas in same DB |
 | Date Added | Date | When the idea was captured |
 | Tags | Multi-select | Free-form tags for filtering |
+
+Create a **Board view** called "Idea Pipeline" grouped by `Stage`.
 
 If these properties don't exist, the skill stores all analysis in the page body.
 
@@ -97,7 +99,7 @@ If these properties don't exist, the skill stores all analysis in the page body.
   4. Create a Notion page in the INVENT database:
      - Set title property to the generated name
      - Set Description (if property exists) to the paragraph summary
-     - Set Status = "New" (if property exists)
+     - Set Stage = "💡 Raw" (if property exists)
      - Set Category (if property exists) using `resources/idea_categories.json`
      - Set Date Added = today (if property exists)
   5. Store the raw user input as the first block in the page body
@@ -170,7 +172,7 @@ If these properties don't exist, the skill stores all analysis in the page body.
      - **Risk mitigation**: How to navigate IP conflicts found
      - **MVP definition**: Smallest viable version to test the idea
   2. Append improvement section to page body
-  3. Set Status = "Analyzed" (if property exists)
+  3. Set Stage = "✅ Validated" (if property exists)
 
 ### Step 6: REPORT
 - **Model**: Kimi K2.6 (default)
@@ -198,14 +200,121 @@ If these properties don't exist, the skill stores all analysis in the page body.
 
 ---
 
-## Manual Commands
+## Conversational Commands
 
-Jon can also trigger analysis manually:
+Jon rarely opens Notion directly. He interacts with ideas through natural conversation
+via Telegram. Allie must recognize these conversational patterns and route them to
+`invent-bot` for processing.
 
-- `Analyze idea: [description]` — Same as #invent but without the tag
-- `Review all ideas` — Re-run cross-reference on entire INVENT database
-- `Refresh idea: [name]` — Re-run IP + Market analysis on an existing idea
-- `List ideas` — Show all ideas with scores from INVENT database
+### Stage Queries (read-only, low cost)
+
+| Jon says... | Action |
+|:------------|:-------|
+| "What's in my raw ideas?" | Query INVENT DB where Stage = "💡 Raw", return titles + dates |
+| "What ideas are being analyzed?" | Query where Stage = "🔍 Analyze" |
+| "Show me validated ideas" | Query where Stage = "✅ Validated" |
+| "What's shelved?" | Query where Stage = "📦 Shelved" |
+| "List ideas" / "List all ideas" | Return all ideas grouped by Stage with scores |
+| "How many ideas do I have?" | Return count by Stage |
+| "Tell me about [idea name]" | Fetch the full page content for that idea |
+
+**Response format** for queries — keep it tight:
+```
+💡 Raw Ideas (3):
+• Smart Collar GPS — added Sep 12
+• Modular Hydro Wall — added Sep 18  
+• AI Recipe Scaler — added Sep 25
+```
+
+### Analysis Triggers (on-demand, higher cost)
+
+| Jon says... | Action |
+|:------------|:-------|
+| "Analyze [idea name]" | Run full pipeline (Steps 2-6) on that idea. Move Stage → "🔍 Analyze" at start, → "✅ Validated" when done |
+| "Analyze idea: [description]" | Capture as new idea (Step 1) THEN run full pipeline |
+| "#invent [description]" | Same as above — capture + analyze |
+| "Refresh [idea name]" | Re-run IP + Market analysis on an existing idea |
+| "Synthesize" / "Synthesize my ideas" / "Synthesize all ideas" | Run cross-idea synthesis (see below) |
+| "What connects to [idea name]?" | Run cross-reference (Step 4) for just that idea |
+
+### Synthesis Command
+
+When Jon says "synthesize" or "synthesize my ideas":
+
+1. Fetch ALL ideas from the INVENT database (all stages)
+2. Run cross-reference analysis across the full set
+3. Identify:
+   - **Clusters**: Ideas grouped by shared technology, target market, or problem domain
+   - **Combinations**: Ideas that would be stronger merged (Idea A's mechanism + Idea B's market)
+   - **Gaps**: Patterns across ideas that point to unserved markets or missing components
+   - **IP Stacking**: Ideas whose patents could build a defensible portfolio together
+4. Write results to a dedicated "Synthesis Report" page in Notion (create if not exists)
+5. Reply with a conversational summary:
+   ```
+   🔗 Synthesis complete — 12 ideas analyzed.
+   
+   Clusters found:
+   • Health/Wearable (3 ideas) — Smart Collar, Hydro Tracker, Sleep Vest
+   • Kitchen/Food (2 ideas) — Recipe Scaler, Portion Plate
+   
+   Best combinations:
+   • Smart Collar + Hydro Tracker → Pet health platform play
+   • Recipe Scaler + Portion Plate → Full meal-prep ecosystem
+   
+   Gap spotted:
+   • 3 ideas touch "real-time monitoring" but none address data privacy — 
+     a privacy-first approach could differentiate all of them.
+   
+   Full report: [Notion link]
+   ```
+
+### Stage Management
+
+| Jon says... | Action |
+|:------------|:-------|
+| "Move [idea] to analyze" | Set Stage = "🔍 Analyze" |
+| "Shelve [idea]" | Set Stage = "📦 Shelved" |
+| "Unshelve [idea]" | Set Stage = "💡 Raw" |
+| "Validate [idea]" | Set Stage = "✅ Validated" |
+
+---
+
+## Memory Isolation
+
+**All invention-related work is delegated to `invent-bot`.**
+
+Allie's role is **routing only** — she recognizes the conversational trigger, passes the
+command to invent-bot, and relays the response back to Jon. She does NOT:
+- Store idea details in her own working memory
+- Retain analysis results in her context
+- Accumulate idea state across conversations
+
+### Why
+- Ideas can be detailed and context-heavy. Storing them in Allie's working memory
+  crowds out other domains (finance, health, home, etc.)
+- Invent-bot maintains its own context of the INVENT database
+- This keeps token usage efficient — queries only cost tokens when Jon asks
+
+### Routing Pattern
+```
+Jon (Telegram) → Allie → recognizes idea command
+                        → delegates to invent-bot
+                        → invent-bot queries Notion INVENT DB
+                        → invent-bot returns result
+                        → Allie relays to Jon
+                        → Allie forgets the details (no memory write)
+```
+
+### What Allie DOES remember
+- That the INVENT database exists and has X ideas (count only)
+- That invent-bot handles all idea operations
+- The stage vocabulary: Raw, Analyze, Validated, Shelved
+- Jon's preference: on-demand only, no proactive analysis
+
+### What Allie does NOT remember
+- Individual idea titles, descriptions, or scores
+- Analysis results or synthesis reports
+- Idea relationships or clusters
 
 ---
 
