@@ -1,0 +1,43 @@
+{
+  "n8n_base_url": "https://n8n.clevercorral.com",
+  "n8n_local_url": "http://192.168.1.143:5678",
+  "webhooks": {
+    "media_gateway": "/webhook/media-gateway"
+  },
+  "local_services": {
+    "calibre_web": {
+      "url": "http://localhost:8083",
+      "opds": "http://localhost:8083/opds",
+      "sqlite_path": "/home/jonc/media/books/metadata.db",
+      "user": "jcorral"
+    },
+    "romm": {
+      "url": "http://localhost:8082",
+      "api": "http://localhost:8082/api",
+      "library_path": "/home/jonc/media/roms"
+    },
+    "plex": {
+      "url": "http://localhost:32400",
+      "api": "http://localhost:32400",
+      "library_path": "/home/jonc/media",
+      "auth_header": "X-Plex-Token"
+    },
+    "paperless": {
+      "url": "http://localhost:8010",
+      "api": "http://localhost:8010/api",
+      "consume_path": "/home/jonc/documents/paperless/consume",
+      "auth_header": "Authorization: Token"
+    }
+  },
+  "cloudflare_tunnels": {
+    "calibre_web": "https://books.clevercorral.com",
+    "n8n": "https://n8n.clevercorral.com",
+    "home_assistant": "https://ha.clevercorral.com"
+  },
+  "sync_schedule": {
+    "books": "0 3 * * *",
+    "games": "15 3 * * *",
+    "video_music": "30 3 * * *",
+    "documents": "45 3 * * *"
+  }
+}

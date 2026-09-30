@@ -1,0 +1,62 @@
+{
+  "index.html": {
+    "hero_greeting": { "file": "index.html", "selector": ".hero__greeting", "type": "text", "description": "Subtitle above the main tagline" },
+    "hero_tagline": { "file": "index.html", "selector": ".hero__title", "type": "html", "description": "Main h1 tagline with <br> and <em>" },
+    "hero_subtitle": { "file": "index.html", "selector": ".hero__subtitle", "type": "text", "description": "Hero paragraph below tagline" },
+    "hero_cta_primary": { "file": "index.html", "selector": "#hero-cta-work", "type": "text", "description": "Primary CTA button text" },
+    "hero_cta_secondary": { "file": "index.html", "selector": "#hero-cta-contact", "type": "text", "description": "Secondary CTA button text" },
+    "about_title": { "file": "index.html", "selector": "#about .section-title", "type": "html", "description": "About section h2 heading" },
+    "about_prose_1": { "file": "index.html", "selector": ".about__prose .reveal.reveal--d1", "type": "text", "description": "First about paragraph" },
+    "about_prose_2": { "file": "index.html", "selector": ".about__prose .reveal.reveal--d2", "type": "text", "description": "Second about paragraph" },
+    "about_prose_3": { "file": "index.html", "selector": ".about__prose .reveal.reveal--d3", "type": "text", "description": "Third about paragraph" },
+    "about_stat_years_number": { "file": "index.html", "selector": ".about__stats .stat:nth-child(1) .stat__number", "type": "text", "description": "Years stat number (e.g. '10+')" },
+    "about_stat_years_label": { "file": "index.html", "selector": ".about__stats .stat:nth-child(1) .stat__label", "type": "text", "description": "Years stat label" },
+    "about_stat_campaigns_number": { "file": "index.html", "selector": ".about__stats .stat:nth-child(3) .stat__number", "type": "text", "description": "Campaigns stat number (e.g. '500+')" },
+    "about_stat_campaigns_label": { "file": "index.html", "selector": ".about__stats .stat:nth-child(3) .stat__label", "type": "text", "description": "Campaigns stat label" },
+    "about_stat_ai_number": { "file": "index.html", "selector": ".about__stats .stat:nth-child(5) .stat__number", "type": "text", "description": "AI systems stat number" },
+    "about_stat_ai_label": { "file": "index.html", "selector": ".about__stats .stat:nth-child(5) .stat__label", "type": "text", "description": "AI systems stat label" },
+    "about_stat_industries_number": { "file": "index.html", "selector": ".about__stats .stat:nth-child(7) .stat__number", "type": "text", "description": "Industries stat number" },
+    "about_stat_industries_label": { "file": "index.html", "selector": ".about__stats .stat:nth-child(7) .stat__label", "type": "text", "description": "Industries stat label" },
+    "work_section_label": { "file": "index.html", "selector": "#work .section-label", "type": "text", "description": "Work section label ('What I do')" },
+    "work_section_title": { "file": "index.html", "selector": "#work .section-title", "type": "text", "description": "Work section h2 heading" },
+    "work_section_desc": { "file": "index.html", "selector": "#work .section-desc", "type": "text", "description": "Work section description paragraph" },
+    "work_card_social": { "file": "index.html", "selector": "#work-card-social", "type": "html", "description": "Social & Digital work card (01)" },
+    "work_card_email": { "file": "index.html", "selector": "#work-card-email", "type": "html", "description": "Email & CRM work card (02)" },
+    "ai_section_label": { "file": "index.html", "selector": "#ai-edge .section-label", "type": "text", "description": "AI section label" },
+    "ai_section_title": { "file": "index.html", "selector": "#ai-edge .section-title", "type": "html", "description": "AI section h2 heading" },
+    "ai_section_desc": { "file": "index.html", "selector": "#ai-edge .section-desc", "type": "text", "description": "AI section description" },
+    "ai_cap_knowledge": { "file": "index.html", "selector": ".ai-cap:nth-child(1)", "type": "html", "description": "Knowledge Bases capability card" },
+    "ai_cap_prompts": { "file": "index.html", "selector": ".ai-cap:nth-child(2)", "type": "html", "description": "Prompt Templates capability card" },
+    "ai_cap_qa": { "file": "index.html", "selector": ".ai-cap:nth-child(3)", "type": "html", "description": "Automated QA capability card" },
+    "ai_cap_workflow": { "file": "index.html", "selector": ".ai-cap:nth-child(4)", "type": "html", "description": "Workflow Integration capability card" },
+    "ai_philosophy_quote": { "file": "index.html", "selector": ".ai-edge__quote", "type": "text", "description": "AI philosophy quote" },
+    "ai_philosophy_attribution": { "file": "index.html", "selector": ".ai-edge__attribution", "type": "text", "description": "Quote attribution line" },
+    "marquee_items": { "file": "index.html", "selector": "#marquee-track .marquee__item", "type": "list", "description": "Skills ticker items (Brand Voice, NotebookLM, Prompt Engineering, etc.)" },
+    "contact_section_label": { "file": "index.html", "selector": "#contact .section-label", "type": "text", "description": "Contact section label" },
+    "contact_title": { "file": "index.html", "selector": ".contact__title", "type": "html", "description": "Contact section h2" },
+    "contact_desc": { "file": "index.html", "selector": ".contact__desc", "type": "text", "description": "Contact section description" },
+    "footer_copy": { "file": "index.html", "selector": ".footer__copy", "type": "text", "description": "Footer copyright line" },
+    "footer_note": { "file": "index.html", "selector": ".footer__note", "type": "text", "description": "Footer tagline" },
+    "seo_title": { "file": "index.html", "selector": "title", "type": "text", "description": "Page title tag" },
+    "seo_description": { "file": "index.html", "selector": "meta[name='description']", "type": "attr:content", "description": "Meta description" },
+    "og_title": { "file": "index.html", "selector": "meta[property='og:title']", "type": "attr:content", "description": "Open Graph title" },
+    "og_description": { "file": "index.html", "selector": "meta[property='og:description']", "type": "attr:content", "description": "Open Graph description" }
+  },
+  "resume.html": {
+    "_note": "Resume page structure varies — web-bot should read the actual HTML structure before editing",
+    "resume_full": { "file": "resume.html", "selector": "body", "type": "html", "description": "Full resume page — inspect structure before editing" }
+  },
+  "work_pages": {
+    "_template": "work/social.html",
+    "_note": "All work pages follow the same structure. Use social.html as the canonical template.",
+    "work_hero_category": { "file": "work/*.html", "selector": ".work-hero__category", "type": "text", "description": "Case study category label" },
+    "work_hero_title": { "file": "work/*.html", "selector": ".work-hero__title", "type": "html", "description": "Case study h1 title" },
+    "work_hero_desc": { "file": "work/*.html", "selector": ".work-hero__desc", "type": "text", "description": "Case study description paragraph" },
+    "work_seo_title": { "file": "work/*.html", "selector": "title", "type": "text", "description": "Work page title tag" },
+    "work_seo_description": { "file": "work/*.html", "selector": "meta[name='description']", "type": "attr:content", "description": "Work page meta description" }
+  },
+  "stylesheets": {
+    "global_theme": { "file": "index.css", "selector": ":root", "type": "css_vars", "description": "CSS custom properties for colors, typography, spacing" },
+    "work_styles": { "file": "work/work.css", "selector": null, "type": "css", "description": "Work page specific styles" }
+  }
+}

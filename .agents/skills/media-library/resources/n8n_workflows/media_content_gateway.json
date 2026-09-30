@@ -1,0 +1,133 @@
+{
+  "name": "Media Content Gateway",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "media-gateway",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "dataType": "string",
+        "value1": "={{ $json.body.action }}",
+        "rules": {
+          "rules": [
+            { "value2": "get_book_content", "output": 0 },
+            { "value2": "get_book_cover", "output": 1 },
+            { "value2": "get_document_text", "output": 2 },
+            { "value2": "search_all", "output": 3 },
+            { "value2": "get_stats", "output": 4 }
+          ]
+        },
+        "fallbackOutput": 5
+      },
+      "name": "Switch on Action",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const { execSync } = require('child_process');\nconst { id, format, max_chars = 50000 } = $json.body;\nif (!id || !format) return [{ json: { error: 'Missing id or format' } }];\nif (format.toLowerCase() === 'pdf') return [{ json: { error: 'PDF not supported for text extraction, use epub' } }];\n\ntry {\n  const url = `http://localhost:8083/download/${id}/${format.toLowerCase()}`;\n  const tmpFile = `/tmp/book_${id}.epub`;\n  execSync(`curl -s -L -o ${tmpFile} ${url}`);\n  const unzipOutput = execSync(`unzip -p ${tmpFile} '*.xhtml' '*.html' 2>/dev/null || echo ''`, {encoding: 'utf-8'});\n  let text = unzipOutput.replace(/<[^>]*>?/gm, ' ').replace(/\\s+/g, ' ').trim();\n  const total_chars = text.length;\n  let content_truncated = false;\n  if (text.length > max_chars) {\n    text = text.substring(0, max_chars);\n    content_truncated = true;\n  }\n  return [{ json: { status: 'ok', source: 'calibre', title: `Book ${id}`, content: text, content_truncated, total_chars } }];\n} catch (err) {\n  return [{ json: { error: err.message } }];\n}"
+      },
+      "name": "Get Book Content",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, -400]
+    },
+    {
+      "parameters": {
+        "url": "=http://localhost:8083/cover/{{$json.body.id}}",
+        "options": {}
+      },
+      "name": "Get Book Cover",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, -200]
+    },
+    {
+      "parameters": {
+        "url": "=http://localhost:8010/api/documents/{{$json.body.id}}/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Token {{$env.PAPERLESS_TOKEN}}" }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Get Document Text",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const { query } = $json.body;\nif (!query) return [{ json: { error: 'Missing query' } }];\n// Mock implementation for search_all to illustrate the node\n// Real implementation would use fetch() or axios() to hit Notion API for each DB\nreturn [{ json: { status: 'ok', results: [{type: 'book', title: 'Example Book matching ' + query}] } }];"
+      },
+      "name": "Search All",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Mock implementation for get_stats to illustrate the node\n// Real implementation would use fetch() to hit Notion API for each DB count\nreturn [{ json: { books: 100, games: 50, videos: 200, documents: 500 } }];"
+      },
+      "name": "Get Stats",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}"
+      },
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [880, 0]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [ [ { "node": "Switch on Action", "type": "main", "index": 0 } ] ]
+    },
+    "Switch on Action": {
+      "main": [
+        [ { "node": "Get Book Content", "type": "main", "index": 0 } ],
+        [ { "node": "Get Book Cover", "type": "main", "index": 0 } ],
+        [ { "node": "Get Document Text", "type": "main", "index": 0 } ],
+        [ { "node": "Search All", "type": "main", "index": 0 } ],
+        [ { "node": "Get Stats", "type": "main", "index": 0 } ]
+      ]
+    },
+    "Get Book Content": {
+      "main": [ [ { "node": "Respond to Webhook", "type": "main", "index": 0 } ] ]
+    },
+    "Get Book Cover": {
+      "main": [ [ { "node": "Respond to Webhook", "type": "main", "index": 0 } ] ]
+    },
+    "Get Document Text": {
+      "main": [ [ { "node": "Respond to Webhook", "type": "main", "index": 0 } ] ]
+    },
+    "Search All": {
+      "main": [ [ { "node": "Respond to Webhook", "type": "main", "index": 0 } ] ]
+    },
+    "Get Stats": {
+      "main": [ [ { "node": "Respond to Webhook", "type": "main", "index": 0 } ] ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

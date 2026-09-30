@@ -1,0 +1,70 @@
+{
+  "brand_voice": {
+    "tagline": "Let's write something worth reading.",
+    "philosophy": "Craft first. Always.",
+    "ai_stance": "AI sharpens the craft but doesn't replace the writer",
+    "tone": [
+      "warm",
+      "professional",
+      "intentional",
+      "not salesy"
+    ]
+  },
+  "typography": {
+    "headings": {
+      "font_family": "'Cormorant Garamond', 'Georgia', serif",
+      "css_var": "--font-serif",
+      "usage": "h1, h2, h3, quotes"
+    },
+    "body": {
+      "font_family": "'Inter', system-ui, -apple-system, sans-serif",
+      "css_var": "--font-sans",
+      "usage": "paragraphs, buttons, UI elements"
+    }
+  },
+  "color_palette": {
+    "primary": {
+      "ink": {
+        "hex": "#1A1A1A",
+        "css_var": "--ink",
+        "description": "Deepest dark for main text"
+      },
+      "ink_soft": {
+        "hex": "#3D3D3D",
+        "css_var": "--ink-soft",
+        "description": "Secondary text and borders"
+      },
+      "paper": {
+        "hex": "#FAF8F5",
+        "css_var": "--paper",
+        "description": "Primary background, warm off-white"
+      },
+      "paper_warm": {
+        "hex": "#F5F0EA",
+        "css_var": "--paper-warm",
+        "description": "Secondary background for sections"
+      }
+    },
+    "accents": {
+      "vermillion": {
+        "hex": "#C84032",
+        "css_var": "--vermillion",
+        "description": "Primary accent for CTAs and highlights"
+      },
+      "indigo": {
+        "hex": "#2C4A6E",
+        "css_var": "--indigo",
+        "description": "Secondary accent for depth"
+      }
+    }
+  },
+  "design_philosophy": {
+    "name": "Wabi-sabi",
+    "principles": [
+      "warm",
+      "organic",
+      "restrained",
+      "breathing room"
+    ]
+  }
+}

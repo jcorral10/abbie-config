@@ -1,0 +1,175 @@
+{
+  "name": "Documents Catalog Sync",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "45 3 * * *"
+            }
+          ]
+        }
+      },
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "url": "http://localhost:8010/api/documents/?page_size=100",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Token {{$env.PAPERLESS_TOKEN}}" }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Fetch documents",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "url": "http://localhost:8010/api/tags/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Token {{$env.PAPERLESS_TOKEN}}" }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Fetch tags",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "url": "http://localhost:8010/api/correspondents/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Token {{$env.PAPERLESS_TOKEN}}" }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Fetch correspondents",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "url": "http://localhost:8010/api/document_types/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Token {{$env.PAPERLESS_TOKEN}}" }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Fetch types",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [880, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.notion.com/v1/databases/3da63d55-66c5-818c-bc85-fcbf681bdb59/query",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{$env.NOTION_TOKEN}}" },
+            { "name": "Notion-Version", "value": "2022-06-28" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"page_size\": 100}"
+      },
+      "name": "Query Notion DB",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1100, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const docs = $input.all(0)[0]?.json?.results || [];\nconst tagsData = $input.all(1)[0]?.json?.results || [];\nconst correspData = $input.all(2)[0]?.json?.results || [];\nconst typesData = $input.all(3)[0]?.json?.results || [];\nconst notionPages = $input.all(4)[0]?.json?.results || [];\n\nconst tagMap = {}; tagsData.forEach(t => tagMap[t.id] = t.name);\nconst corrMap = {}; correspData.forEach(c => corrMap[c.id] = c.name);\nconst typeMap = {}; typesData.forEach(t => typeMap[t.id] = t.name);\n\nconst notionMap = {};\nfor (const page of notionPages) {\n  const pId = page.properties['Paperless ID']?.number;\n  if (pId) notionMap[pId] = page.id;\n}\n\nconst requests = [];\nfor (const doc of docs) {\n  const properties = {\n    'Title': { title: [{ text: { content: doc.title } }] },\n    'Correspondent': { rich_text: [{ text: { content: corrMap[doc.correspondent] || '' } }] },\n    'Date Created': { date: { start: doc.created } },\n    'Date Added': { date: { start: doc.added } },\n    'ASN': { number: doc.archive_serial_number || null },\n    'Has OCR': { checkbox: !!doc.content },\n    'Paperless ID': { number: doc.id },\n    'File Path': { rich_text: [{ text: { content: doc.original_file_name || '' } }] }\n  };\n  \n  if (doc.document_type && typeMap[doc.document_type]) {\n    properties['Document Type'] = { select: { name: typeMap[doc.document_type] } };\n  }\n  \n  if (doc.tags && doc.tags.length > 0) {\n    properties['Tags'] = { multi_select: doc.tags.map(tid => ({name: tagMap[tid] || `Tag${tid}`})) };\n  }\n  \n  const pageId = notionMap[doc.id];\n  if (pageId) {\n    requests.push({ json: { method: 'PATCH', url: `https://api.notion.com/v1/pages/${pageId}`, body: { properties }, type: 'update' } });\n  } else {\n    requests.push({ json: { method: 'POST', url: 'https://api.notion.com/v1/pages', body: { parent: { database_id: '3da63d55-66c5-818c-bc85-fcbf681bdb59' }, properties }, type: 'add' } });\n  }\n}\nreturn requests;"
+      },
+      "name": "Diff & Upsert",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1320, 0]
+    },
+    {
+      "parameters": {
+        "method": "={{ $json.method }}",
+        "url": "={{ $json.url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{$env.NOTION_TOKEN}}" },
+            { "name": "Notion-Version", "value": "2022-06-28" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.body) }}"
+      },
+      "name": "Upsert to Notion",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1540, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "let added = 0, updated = 0, unchanged = 0, errors = 0;\nconst items = $input.all();\nfor (const item of items) {\n  if (item.json.type === 'add') added++;\n  else if (item.json.type === 'update') updated++;\n}\nreturn [{ json: { added, updated, unchanged, errors } }];"
+      },
+      "name": "Log Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1760, 0]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [ [ { "node": "Fetch documents", "type": "main", "index": 0 } ] ]
+    },
+    "Fetch documents": {
+      "main": [ [ { "node": "Fetch tags", "type": "main", "index": 0 } ] ]
+    },
+    "Fetch tags": {
+      "main": [ [ { "node": "Fetch correspondents", "type": "main", "index": 0 } ] ]
+    },
+    "Fetch correspondents": {
+      "main": [ [ { "node": "Fetch types", "type": "main", "index": 0 } ] ]
+    },
+    "Fetch types": {
+      "main": [ [ { "node": "Query Notion DB", "type": "main", "index": 0 } ] ]
+    },
+    "Query Notion DB": {
+      "main": [ [ { "node": "Diff & Upsert", "type": "main", "index": 0 } ] ]
+    },
+    "Diff & Upsert": {
+      "main": [ [ { "node": "Upsert to Notion", "type": "main", "index": 0 } ] ]
+    },
+    "Upsert to Notion": {
+      "main": [ [ { "node": "Log Results", "type": "main", "index": 0 } ] ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

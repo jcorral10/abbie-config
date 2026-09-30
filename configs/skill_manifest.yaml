@@ -104,6 +104,11 @@ skills:
     blocker: null
     cron_count: 0
     last_deployed: null
+  - name: portfolio-manager
+    status: pending
+    blocker: GITHUB_TOKEN with push access to jcorral10/joncorral-portfolio
+    cron_count: 0
+    last_deployed: null
   - name: world-intelligence
     status: parked
     blocker: WORLDMONITOR_API_KEY needed

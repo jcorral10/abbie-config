@@ -76,6 +76,7 @@
 | Interest rates, debt balances, 401(k) | Needed for financial planner scripts | Jon |
 | Speculative decoding (E2B draft) | Only if RAM headroom allows | Allie |
 | VM git remote update | `git remote set-url origin https://github.com/jcorral10/abbie-config.git` | Allie |
+| Self-hosted notes migration | Mac Mini CPU too old (Core 2 Duo, no SSE4.2/x86-64-v2). AppFlowy deployed but web frontend broken (Bun SIGILL). Plan: Obsidian + Syncthing on better hardware. Stack stopped, config preserved at `mini:/home/jonc/appflowy/`. | Jon |
 
 ### Household Financial Profile
 - **Jon**: $2,860 biweekly (every other Friday), 26 paychecks/yr = ~$74,360/yr
@@ -98,10 +99,10 @@ Orchestrator (default) owns all 16 crons + 2 system crontab jobs. Specialists ha
 - **[DEFAULT]**: 2 crons (LS1 life score, CAL2 calendar intel) + stale sweeper (system crontab)
 
 ### Key Architecture Facts (v2.1)
-- **Architecture**: Orchestrator + 10 specialists, `bot_mode_protocol: true`
+- **Architecture**: Orchestrator + 11 specialists, `bot_mode_protocol: true`
 - **Orchestrator**: default profile, all crons, 6 skills (project-board, life-score, calendar, work-context-handoff, allie-skill-builder, system-health)
-- **Specialists**: finance-bot, health-bot, market-bot, home-bot, plant-bot, work-bot, osint-bot, invent-bot, job-bot, travel-bot — zero crons, pruned skills, on-demand via CLI wrappers
-- **Models**: deepseek (orchestrator, finance, health, job), gemini-local (market, home, plant, work, osint, invent, travel)
+- **Specialists**: finance-bot, health-bot, market-bot, home-bot, plant-bot, work-bot, osint-bot, invent-bot, job-bot, travel-bot, web-bot — zero crons, pruned skills, on-demand via CLI wrappers
+- **Models**: deepseek (orchestrator, finance, health, job, web), gemini-local (market, home, plant, work, osint, invent, travel)
 - **Cross-bot**: Peers communicate via CLI wrappers — Finance↔Market, Invent→OSINT, Invent→Home, Home↔Plant, Job→Finance/Work
 - **Bridge**: FastAPI on port 8787, Cloudflare tunnel, Notion as fallback
 - **Robinhood MCP**: Market Bot = primary trader (approval-gated), Antigravity = suggestion mode only

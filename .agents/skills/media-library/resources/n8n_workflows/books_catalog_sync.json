@@ -1,0 +1,87 @@
+{
+  "name": "Books Catalog Sync",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 3 * * *"
+            }
+          ]
+        }
+      },
+      "name": "Daily 3:00 AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const sqlite3 = require('/usr/local/lib/node_modules/n8n/node_modules/sqlite3');\n\nreturn new Promise((resolve, reject) => {\n  const db = new sqlite3.Database('/calibre-library/metadata.db', sqlite3.OPEN_READONLY, (err) => {\n    if (err) return reject(new Error('Cannot open Calibre DB: ' + err.message));\n\n    const queryBooks = `SELECT b.id, b.title, b.timestamp, b.series_index, b.path, b.has_cover,\n      GROUP_CONCAT(DISTINCT a.name) as authors, GROUP_CONCAT(DISTINCT t.name) as tags,\n      s.name as series, p.name as publisher, r.rating\n      FROM books b\n      LEFT JOIN books_authors_link bal ON b.id = bal.book\n      LEFT JOIN authors a ON bal.author = a.id\n      LEFT JOIN books_tags_link btl ON b.id = btl.book\n      LEFT JOIN tags t ON btl.tag = t.id\n      LEFT JOIN books_series_link bsl ON b.id = bsl.book\n      LEFT JOIN series s ON bsl.series = s.id\n      LEFT JOIN books_publishers_link bpl ON b.id = bpl.book\n      LEFT JOIN publishers p ON bpl.publisher = p.id\n      LEFT JOIN books_ratings_link brl ON b.id = brl.book\n      LEFT JOIN ratings r ON brl.rating = r.id\n      GROUP BY b.id`;\n\n    const queryFormats = 'SELECT book, format, uncompressed_size FROM data';\n\n    db.all(queryBooks, (err, books) => {\n      if (err) { db.close(); return reject(new Error('Books query failed: ' + err.message)); }\n\n      db.all(queryFormats, (err, formats) => {\n        db.close();\n        if (err) return reject(new Error('Formats query failed: ' + err.message));\n\n        const sizeMap = {};\n        const fmtMap = {};\n        for (const f of formats) {\n          sizeMap[f.book] = (sizeMap[f.book] || 0) + (f.uncompressed_size || 0);\n          if (!fmtMap[f.book]) fmtMap[f.book] = [];\n          fmtMap[f.book].push(f.format);\n        }\n\n        const result = books.map(b => ({\n          json: {\n            id: b.id,\n            title: b.title || 'Unknown',\n            authors: b.authors || '',\n            tags: b.tags || '',\n            series: b.series || '',\n            seriesIndex: b.series_index || null,\n            publisher: b.publisher || '',\n            timestamp: b.timestamp || null,\n            rating: b.rating ? b.rating / 2 : null,\n            hasCover: b.has_cover === 1,\n            path: b.path || '',\n            formats: fmtMap[b.id] || [],\n            totalSizeBytes: sizeMap[b.id] || 0\n          }\n        }));\n\n        resolve(result);\n      });\n    });\n  });\n});"
+      },
+      "name": "Read Calibre DB",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.notion.com/v1/databases/3da63d55-66c5-8133-a230-cdc65171d864/query",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "={{$env.NOTION_TOKEN}}" },
+            { "name": "Notion-Version", "value": "2022-06-28" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"page_size\": 100}"
+      },
+      "name": "Query Existing Notion Entries",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const calibreBooks = $('Read Calibre DB').all();\nconst notionPages = $('Query Existing Notion Entries').first().json.results || [];\n\nconst existingIds = new Map();\nfor (const page of notionPages) {\n  const calId = page.properties?.['Calibre ID']?.number;\n  if (calId) existingIds.set(calId, page.id);\n}\n\nconst toCreate = [];\nconst toUpdate = [];\nfor (const item of calibreBooks) {\n  const b = item.json;\n  if (existingIds.has(b.id)) {\n    toUpdate.push({ ...b, notionPageId: existingIds.get(b.id) });\n  } else {\n    toCreate.push(b);\n  }\n}\n\nreturn [{ json: { toCreate, toUpdate, stats: { total: calibreBooks.length, new: toCreate.length, existing: toUpdate.length } } }];"
+      },
+      "name": "Diff Calibre vs Notion",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const { toCreate, stats } = $input.first().json;\nconst notionToken = $env.NOTION_TOKEN;\nconst dbId = '3da63d55-66c5-8133-a230-cdc65171d864';\nlet created = 0, errors = 0;\n\nfor (const b of toCreate) {\n  try {\n    const body = {\n      parent: { database_id: dbId },\n      properties: {\n        'Title': { title: [{ text: { content: (b.title || '').slice(0, 200) } }] },\n        'Author': { rich_text: [{ text: { content: (b.authors || '').slice(0, 200) } }] },\n        'Format': { multi_select: (b.formats || []).map(f => ({ name: f })) },\n        'Tags': { multi_select: (b.tags || '').split(',').filter(t => t.trim()).map(t => ({ name: t.trim().slice(0, 100) })) },\n        'Series': { rich_text: [{ text: { content: (b.series || '').slice(0, 200) } }] },\n        'Series Index': { number: b.seriesIndex },\n        'Publisher': { rich_text: [{ text: { content: (b.publisher || '').slice(0, 200) } }] },\n        'Date Added': b.timestamp ? { date: { start: new Date(b.timestamp).toISOString().split('T')[0] } } : { date: null },\n        'Rating': { number: b.rating },\n        'File Size MB': { number: Math.round(b.totalSizeBytes / 1048576) },\n        'Has Cover': { checkbox: b.hasCover },\n        'Calibre ID': { number: b.id },\n        'File Path': { rich_text: [{ text: { content: (b.path || '').slice(0, 200) } }] },\n        'Status': { select: { name: 'Unread' } }\n      }\n    };\n    const resp = await fetch('https://api.notion.com/v1/pages', {\n      method: 'POST',\n      headers: { 'Authorization': notionToken, 'Notion-Version': '2022-06-28', 'Content-Type': 'application/json' },\n      body: JSON.stringify(body)\n    });\n    if (resp.ok) created++; else errors++;\n  } catch (e) { errors++; }\n}\n\nreturn [{ json: { created, unchanged: stats.existing, errors, total: stats.total } }];"
+      },
+      "name": "Upsert to Notion",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const result = $input.first().json;\nconsole.log(`Books Sync: ${result.created} created, ${result.unchanged} unchanged, ${result.errors} errors (${result.total} total books)`);\nreturn [{ json: result }];"
+      },
+      "name": "Log Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 0]
+    }
+  ],
+  "connections": {
+    "Daily 3:00 AM": { "main": [[{ "node": "Read Calibre DB", "type": "main", "index": 0 }]] },
+    "Read Calibre DB": { "main": [[{ "node": "Query Existing Notion Entries", "type": "main", "index": 0 }]] },
+    "Query Existing Notion Entries": { "main": [[{ "node": "Diff Calibre vs Notion", "type": "main", "index": 0 }]] },
+    "Diff Calibre vs Notion": { "main": [[{ "node": "Upsert to Notion", "type": "main", "index": 0 }]] },
+    "Upsert to Notion": { "main": [[{ "node": "Log Results", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" }
+}

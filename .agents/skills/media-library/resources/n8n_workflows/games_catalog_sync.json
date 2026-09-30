@@ -1,0 +1,107 @@
+{
+  "name": "Games Catalog Sync",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "15 3 * * *"
+            }
+          ]
+        }
+      },
+      "name": "Daily 3:15 AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8082/api/token",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/x-www-form-urlencoded" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "string",
+        "body": "=grant_type=password&username={{$env.ROMM_USER}}&password={{$env.ROMM_PASS}}&scope=me.read platforms.read roms.read"
+      },
+      "name": "Get RomM Token",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const token = $input.first().json.access_token;\nconst allRoms = [];\nlet platforms = [];\n\ntry {\n  const pResp = await fetch('http://localhost:8082/api/platforms', {\n    headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/json' }\n  });\n  platforms = await pResp.json();\n} catch(e) {\n  return [{ json: { error: 'Failed to fetch platforms: ' + e.message } }];\n}\n\nconst withRoms = platforms.filter(p => (p.rom_count || 0) > 0);\n\nfor (const platform of withRoms) {\n  try {\n    let page = 1;\n    let hasMore = true;\n    while (hasMore) {\n      const resp = await fetch(\n        `http://localhost:8082/api/roms?platform_id=${platform.id}&limit=100&page=${page}`,\n        { headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/json' } }\n      );\n      const data = await resp.json();\n      const items = Array.isArray(data) ? data : (data.items || data.results || []);\n      for (const rom of items) {\n        allRoms.push({\n          title: rom.name || rom.file_name || 'Unknown',\n          platform: platform.name || platform.slug || 'Unknown',\n          genre: (rom.genres || []).map(g => typeof g === 'string' ? g : g.name || ''),\n          region: rom.region || '',\n          fileName: rom.file_name || '',\n          fileSizeMB: Math.round((rom.file_size_bytes || 0) / 1048576),\n          hasScreenshot: !!(rom.path_cover_s || rom.path_cover_l || rom.url_screenshots),\n          rommId: rom.id,\n          platformSlug: platform.slug || ''\n        });\n      }\n      hasMore = items.length === 100;\n      page++;\n    }\n  } catch(e) { /* skip failed platform */ }\n}\n\nreturn [{ json: { items: allRoms, total: allRoms.length, platformCount: withRoms.length } }];"
+      },
+      "name": "Fetch All ROMs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.notion.com/v1/databases/3da63d55-66c5-8113-a6eb-d2fd60530380/query",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "={{$env.NOTION_TOKEN}}" },
+            { "name": "Notion-Version", "value": "2022-06-28" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"page_size\": 100}"
+      },
+      "name": "Query Existing Notion Entries",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const rommItems = $('Fetch All ROMs').first().json.items;\nconst notionResults = $('Query Existing Notion Entries').first().json.results || [];\n\nconst existingIds = new Map();\nfor (const page of notionResults) {\n  const rommId = page.properties?.['RomM ID']?.number;\n  if (rommId) existingIds.set(rommId, page.id);\n}\n\nconst toCreate = [];\nconst unchanged = [];\nfor (const item of rommItems) {\n  if (existingIds.has(item.rommId)) {\n    unchanged.push(item);\n  } else {\n    toCreate.push(item);\n  }\n}\n\nreturn [{ json: { toCreate, stats: { total: rommItems.length, new: toCreate.length, existing: unchanged.length } } }];"
+      },
+      "name": "Diff RomM vs Notion",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const { toCreate, stats } = $input.first().json;\nconst notionToken = $env.NOTION_TOKEN;\nconst dbId = '3da63d55-66c5-8113-a6eb-d2fd60530380';\nlet created = 0, errors = 0;\n\nfor (const item of toCreate.slice(0, 100)) {\n  try {\n    const body = {\n      parent: { database_id: dbId },\n      properties: {\n        'Title': { title: [{ text: { content: item.title.slice(0, 200) } }] },\n        'Platform': { select: { name: item.platform.slice(0, 100) } },\n        'Genre': { multi_select: (item.genre || []).slice(0, 10).map(g => ({ name: g.slice(0, 100) })) },\n        'Region': item.region ? { select: { name: item.region.slice(0, 100) } } : { select: null },\n        'File Name': { rich_text: [{ text: { content: item.fileName.slice(0, 200) } }] },\n        'File Size MB': { number: item.fileSizeMB },\n        'Has Screenshot': { checkbox: item.hasScreenshot },\n        'RomM ID': { number: item.rommId },\n        'Status': { select: { name: 'Not Played' } }\n      }\n    };\n    const resp = await fetch('https://api.notion.com/v1/pages', {\n      method: 'POST',\n      headers: { 'Authorization': notionToken, 'Notion-Version': '2022-06-28', 'Content-Type': 'application/json' },\n      body: JSON.stringify(body)\n    });\n    if (resp.ok) created++; else errors++;\n  } catch (e) { errors++; }\n}\n\nreturn [{ json: { created, unchanged: stats.existing, errors, total: stats.total } }];"
+      },
+      "name": "Upsert to Notion",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const result = $input.first().json;\nconsole.log(`Games Sync: ${result.created} created, ${result.unchanged} unchanged, ${result.errors} errors (${result.total} total ROMs)`);\nreturn [{ json: result }];"
+      },
+      "name": "Log Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1320, 0]
+    }
+  ],
+  "connections": {
+    "Daily 3:15 AM": { "main": [[{ "node": "Get RomM Token", "type": "main", "index": 0 }]] },
+    "Get RomM Token": { "main": [[{ "node": "Fetch All ROMs", "type": "main", "index": 0 }]] },
+    "Fetch All ROMs": { "main": [[{ "node": "Query Existing Notion Entries", "type": "main", "index": 0 }]] },
+    "Query Existing Notion Entries": { "main": [[{ "node": "Diff RomM vs Notion", "type": "main", "index": 0 }]] },
+    "Diff RomM vs Notion": { "main": [[{ "node": "Upsert to Notion", "type": "main", "index": 0 }]] },
+    "Upsert to Notion": { "main": [[{ "node": "Log Results", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" }
+}

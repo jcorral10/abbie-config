@@ -1,0 +1,104 @@
+{
+  "name": "Video & Music Catalog Sync",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "30 3 * * *"
+            }
+          ]
+        }
+      },
+      "name": "Daily 3:30 AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "url": "=http://localhost:32400/library/sections?X-Plex-Token={{$env.PLEX_TOKEN}}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "name": "Get Plex Libraries",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const sections = $input.first().json?.MediaContainer?.Directory || [];\nconst plexToken = $env.PLEX_TOKEN;\nconst allItems = [];\n\nfor (const section of sections) {\n  const sectionId = section.key;\n  const sectionType = section.type; // 'movie', 'show', 'artist'\n  \n  if (!['movie', 'show', 'artist'].includes(sectionType)) continue;\n  \n  try {\n    const resp = await fetch(\n      `http://localhost:32400/library/sections/${sectionId}/all?X-Plex-Token=${plexToken}`,\n      { headers: { 'Accept': 'application/json' } }\n    );\n    const data = await resp.json();\n    const items = data?.MediaContainer?.Metadata || [];\n    \n    for (const item of items) {\n      let mediaType = 'Movie';\n      if (sectionType === 'show') mediaType = 'TV Show';\n      else if (sectionType === 'artist') mediaType = 'Music Album';\n      \n      let quality = 'SD';\n      if (item.Media && item.Media[0]) {\n        const height = item.Media[0].videoResolution || '';\n        if (height === '4k' || height === '2160') quality = '4K';\n        else if (height === '1080') quality = '1080p';\n        else if (height === '720') quality = '720p';\n      }\n      \n      let fileSizeMB = 0;\n      if (item.Media && item.Media[0] && item.Media[0].Part && item.Media[0].Part[0]) {\n        fileSizeMB = Math.round((item.Media[0].Part[0].size || 0) / 1048576);\n      }\n      \n      allItems.push({\n        title: item.title || 'Unknown',\n        type: mediaType,\n        genre: (item.Genre || []).map(g => g.tag),\n        year: item.year || null,\n        studio: item.studio || (item.Director ? item.Director[0]?.tag : '') || '',\n        durationMin: item.duration ? Math.round(item.duration / 60000) : null,\n        quality: quality,\n        fileSizeMB: fileSizeMB,\n        plexId: String(item.ratingKey || ''),\n        addedAt: item.addedAt ? new Date(item.addedAt * 1000).toISOString().split('T')[0] : null,\n        viewCount: item.viewCount || 0\n      });\n    }\n  } catch (e) {\n    // Skip failed sections\n  }\n}\n\nreturn [{ json: { items: allItems, total: allItems.length } }];"
+      },
+      "name": "Fetch All Plex Items",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.notion.com/v1/databases/3da63d55-66c5-8113-8c2e-d9bc95357696/query",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "={{$env.NOTION_TOKEN}}" },
+            { "name": "Notion-Version", "value": "2022-06-28" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"page_size\": 100}"
+      },
+      "name": "Query Existing Notion Entries",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const plexItems = $('Fetch All Plex Items').first().json.items;\nconst notionResults = $('Query Existing Notion Entries').first().json.results || [];\n\nconst existingPlexIds = new Map();\nfor (const page of notionResults) {\n  const plexId = page.properties?.['Plex ID']?.rich_text?.[0]?.plain_text || '';\n  if (plexId) existingPlexIds.set(plexId, page.id);\n}\n\nconst toCreate = [];\nconst toUpdate = [];\n\nfor (const item of plexItems) {\n  if (existingPlexIds.has(item.plexId)) {\n    toUpdate.push({ ...item, notionPageId: existingPlexIds.get(item.plexId) });\n  } else {\n    toCreate.push(item);\n  }\n}\n\nreturn [{ json: { toCreate, toUpdate, stats: { total: plexItems.length, new: toCreate.length, existing: toUpdate.length } } }];"
+      },
+      "name": "Diff Plex vs Notion",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const { toCreate, toUpdate, stats } = $input.first().json;\nconst notionToken = $env.NOTION_TOKEN;\nconst dbId = '3da63d55-66c5-8113-8c2e-d9bc95357696';\nlet created = 0, updated = 0, errors = 0;\n\nfor (const item of toCreate.slice(0, 50)) {\n  try {\n    const body = {\n      parent: { database_id: dbId },\n      properties: {\n        'Title': { title: [{ text: { content: item.title.slice(0, 200) } }] },\n        'Type': { select: { name: item.type } },\n        'Genre': { multi_select: (item.genre || []).slice(0, 10).map(g => ({ name: g.slice(0, 100) })) },\n        'Year': item.year ? { number: item.year } : { number: null },\n        'Studio': { rich_text: [{ text: { content: (item.studio || '').slice(0, 200) } }] },\n        'Duration Min': item.durationMin ? { number: item.durationMin } : { number: null },\n        'Quality': { select: { name: item.quality } },\n        'File Size MB': { number: item.fileSizeMB },\n        'Plex ID': { rich_text: [{ text: { content: item.plexId } }] },\n        'Status': { select: { name: item.viewCount > 0 ? 'Watched' : 'Unwatched' } }\n      }\n    };\n    const resp = await fetch('https://api.notion.com/v1/pages', {\n      method: 'POST',\n      headers: { 'Authorization': notionToken, 'Notion-Version': '2022-06-28', 'Content-Type': 'application/json' },\n      body: JSON.stringify(body)\n    });\n    if (resp.ok) created++; else errors++;\n  } catch (e) { errors++; }\n}\n\nreturn [{ json: { created, updated: 0, unchanged: stats.existing, errors, total: stats.total } }];"
+      },
+      "name": "Upsert to Notion",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const result = $input.first().json;\nconsole.log(`Video & Music Sync: ${result.created} created, ${result.unchanged} unchanged, ${result.errors} errors (${result.total} total Plex items)`);\nreturn [{ json: result }];"
+      },
+      "name": "Log Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1320, 0]
+    }
+  ],
+  "connections": {
+    "Daily 3:30 AM": { "main": [[{ "node": "Get Plex Libraries", "type": "main", "index": 0 }]] },
+    "Get Plex Libraries": { "main": [[{ "node": "Fetch All Plex Items", "type": "main", "index": 0 }]] },
+    "Fetch All Plex Items": { "main": [[{ "node": "Query Existing Notion Entries", "type": "main", "index": 0 }]] },
+    "Query Existing Notion Entries": { "main": [[{ "node": "Diff Plex vs Notion", "type": "main", "index": 0 }]] },
+    "Diff Plex vs Notion": { "main": [[{ "node": "Upsert to Notion", "type": "main", "index": 0 }]] },
+    "Upsert to Notion": { "main": [[{ "node": "Log Results", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" }
+}
