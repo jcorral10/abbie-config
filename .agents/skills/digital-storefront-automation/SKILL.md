@@ -290,8 +290,8 @@ Listing management is handled by the `EtsyClient` class combined with
 | `price` | `price` | In cents (multiply by 100) |
 | `tags` | `tags` | Array, max 13 tags |
 | `category` | `taxonomy_id` | Map via `etsy_taxonomy.json` |
+| — | `type` | Always `"download"` for digital listings |
 | — | `who_made` | Always `"i_did"` |
-| — | `is_digital` | Always `true` |
 | — | `when_made` | Always `"2020_2026"` |
 | — | `is_supply` | Always `false` |
 

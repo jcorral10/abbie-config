@@ -266,12 +266,17 @@ class EtsyClient:
 
     # ---- Core request ----
 
-    def _headers(self) -> Dict[str, str]:
-        return {
+    def _headers(self, use_json: bool = False) -> Dict[str, str]:
+        headers = {
             "Authorization": f"Bearer {self.auth.access_token}",
             "x-api-key": self.auth.api_key,
             "Accept": "application/json",
         }
+        if use_json:
+            headers["Content-Type"] = "application/json; charset=utf-8"
+        else:
+            headers["Content-Type"] = "application/x-www-form-urlencoded; charset=utf-8"
+        return headers
 
     def _request(
         self,
@@ -290,20 +295,42 @@ class EtsyClient:
         for attempt in range(self._MAX_RETRIES + 1):
             self._wait_for_rate_limit()
             try:
-                headers = self._headers()
-                # Remove Content-Type for multipart uploads
+                # Determine Content-Type and payload based on what's being sent
                 if files:
+                    # Multipart — let requests set boundary automatically
+                    headers = self._headers()
                     headers.pop("Content-Type", None)
+                    req_kwargs: Dict[str, Any] = {"data": data, "files": files}
+                elif json_body is not None:
+                    # Etsy v3 write endpoints require form-encoded, not JSON
+                    headers = self._headers(use_json=False)
+                    form_data: Dict[str, str] = {}
+                    for k, v in json_body.items():
+                        if v is None:
+                            continue
+                        if isinstance(v, bool):
+                            form_data[k] = str(v).lower()
+                        elif isinstance(v, list):
+                            form_data[k] = ",".join(str(i) for i in v)
+                        elif isinstance(v, dict):
+                            form_data[k] = json.dumps(v)
+                        else:
+                            form_data[k] = str(v)
+                    req_kwargs = {"data": form_data}
+                elif data is not None:
+                    headers = self._headers(use_json=False)
+                    req_kwargs = {"data": data}
+                else:
+                    headers = self._headers()
+                    req_kwargs = {}
 
                 resp = self.session.request(
                     method,
                     url,
                     headers=headers,
                     params=params,
-                    json=json_body,
-                    data=data,
-                    files=files,
                     timeout=timeout,
+                    **req_kwargs,
                 )
 
                 # Auto-refresh on 401
@@ -374,10 +401,17 @@ class EtsyClient:
 
         Required fields in *data*: title, description, price, quantity,
         taxonomy_id, who_made, when_made, is_supply.
+        For digital listings, set type="download".
         """
         sid = shop_id or int(_env("ETSY_SHOP_ID"))
         if not data:
             raise ValueError("Listing data payload is required.")
+        # Enforce digital listing type — this shop sells digital products
+        if data.get("is_digital") or data.get("type") == "download":
+            data["type"] = "download"
+            data.pop("is_digital", None)  # type=download replaces is_digital
+            data.pop("shipping_profile_id", None)  # digital listings don't ship
+            data.pop("readiness_state_id", None)  # digital listings have no processing time
         return self._request("POST", f"/application/shops/{sid}/listings", json_body=data)
 
     def update_listing(
