@@ -70,7 +70,7 @@
 | Item | Blocker | Owner |
 |:---|:---|:---|
 | Financial planner crons #8–#14 | Never deployed on VM | Jon/Allie |
-| Etsy storefront crons B1–B8 | Waiting on `ETSY_API_KEY`, `ETSY_SHARED_SECRET`, `ETSY_SHOP_ID` | Jon |
+| Etsy storefront crons B1–B8 | ✅ API verified 2026-10-06. Deploy crons when ready. | Jon/Allie |
 | World Monitor integration | Waiting on subscription (\$39.99/mo) + `WORLDMONITOR_API_KEY` | Jon |
 | Apple Health webhook | Jon needs Health Auto Export setup on iPhone | Jon |
 | Interest rates, debt balances, 401(k) | Needed for financial planner scripts | Jon |

@@ -269,7 +269,7 @@ class EtsyClient:
     def _headers(self, use_json: bool = False) -> Dict[str, str]:
         headers = {
             "Authorization": f"Bearer {self.auth.access_token}",
-            "x-api-key": self.auth.api_key,
+            "x-api-key": f"{self.auth.api_key}:{self.auth.shared_secret}",
             "Accept": "application/json",
         }
         if use_json:
