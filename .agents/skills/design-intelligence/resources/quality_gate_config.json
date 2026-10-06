@@ -1,0 +1,84 @@
+{
+  "_comment": "Quality gate scoring configuration for design brief and final design validation.",
+  "passing_score": 70,
+  "high_confidence_score": 85,
+  "checks": [
+    {
+      "name": "Squint Test",
+      "max_points": 25,
+      "criteria": [
+        "Readable at 150x150px thumbnail size",
+        "Instant category recognition (what IS this product)",
+        "Instant message recognition (what does it SAY)",
+        "Instant audience recognition (who is this FOR)",
+        "Hero element occupies >40% of composition"
+      ]
+    },
+    {
+      "name": "Intersection Formula",
+      "max_points": 20,
+      "criteria": [
+        "Targets a specific identity/subculture (not broad category)",
+        "References a specific relatable situation (not generic statement)",
+        "Applies a distinct micro-aesthetic (named trend, not 'modern')",
+        "Niche description is 5+ words with specificity",
+        "Not in the banned generic niches list"
+      ]
+    },
+    {
+      "name": "Trend Alignment",
+      "max_points": 15,
+      "criteria": [
+        "Uses colors from a Rising or Peak trend palette",
+        "Typography matches recommended pairing for the aesthetic",
+        "Illustration style matches the trend's visual language",
+        "Motifs are specific to the trend (not generic clip art)"
+      ]
+    },
+    {
+      "name": "Thumbnail Contrast",
+      "max_points": 15,
+      "criteria": [
+        "Minimum 4.5:1 contrast ratio between text and background",
+        "Maximum 2 visual focal points (1 preferred)",
+        "No fine detail that becomes noise at thumbnail scale",
+        "Works on both light and dark product blanks (if apparel)"
+      ]
+    },
+    {
+      "name": "Mockup Quality",
+      "max_points": 15,
+      "criteria": [
+        "Lifestyle staging per mockup standards (not flat white default)",
+        "Realistic fabric texture or material visible",
+        "Warm ambient lighting (not clinical flash)",
+        "Context shows product in use (not floating in void)"
+      ]
+    },
+    {
+      "name": "Differentiation",
+      "max_points": 10,
+      "criteria": [
+        "Visually distinct from top 5 competitors in same niche search",
+        "Unique angle or twist not seen in first page of Etsy results",
+        "Does not replicate an existing bestseller's exact composition"
+      ]
+    }
+  ],
+  "auto_fail_patterns": [
+    "Raw unedited AI-generated imagery (glossy, plastic texture, floating artifacts)",
+    "Generic broad niche ('Dog Lover', 'Coffee Mom', 'Gym Rat', 'Best Dad Ever')",
+    "Text unreadable at thumbnail size",
+    "Default POD provider mockup (white background, flat product render)",
+    "More than 2 fonts in a single design",
+    "Clip art or stock vector assemblage without cohesive style",
+    "Pure white (#FFFFFF) backgrounds on planners or wall art",
+    "Crowded composition with no clear visual hierarchy"
+  ],
+  "banned_generic_niches": [
+    "Dog Lover", "Cat Mom", "Coffee Lover", "Wine Mom", "Gym Rat",
+    "Best Dad Ever", "World's Best Mom", "Funny Quote", "Motivational",
+    "Keep Calm", "Live Laugh Love", "Blessed", "Boss Babe",
+    "Mama Bear", "Dog Mom", "Plant Mom"
+  ]
+}

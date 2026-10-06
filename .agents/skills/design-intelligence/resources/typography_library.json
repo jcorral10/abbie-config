@@ -1,0 +1,61 @@
+{
+  "_comment": "Font pairings curated for POD product design. Each pairing follows the Golden POD Hierarchy Rule: one expressive hero + one clean support, max two fonts per design.",
+  "pairings": [
+    {
+      "id": "retro-editorial",
+      "hero": {"font": "Recoleta", "weight": "Bold", "style": "Soft serif, warm bulbous terminals", "license": "Commercial (purchase required)"},
+      "support": {"font": "Inter", "weight": "Regular/Medium", "style": "Clean geometric sans", "license": "Free (Google Fonts)"},
+      "best_for": ["Wall Art", "T-Shirts", "Planners"],
+      "aesthetic_match": ["Sardinecore", "Soft Stitch"],
+      "hierarchy_rule": "Recoleta at 75% visual weight, Inter at 25% for details"
+    },
+    {
+      "id": "matchbook-classic",
+      "hero": {"font": "Cooper Black", "weight": "Regular", "style": "Heavy round serif, high ink coverage", "license": "System font / widely available"},
+      "support": {"font": "Helvetica Neue", "weight": "Regular", "style": "Swiss neutral sans", "license": "System font"},
+      "best_for": ["T-Shirts", "Mugs", "Stickers"],
+      "aesthetic_match": ["Vintage Matchbook", "Sardinecore"],
+      "hierarchy_rule": "Cooper Black for headlines, Helvetica for subtext and small labels"
+    },
+    {
+      "id": "western-heritage",
+      "hero": {"font": "Moranga", "weight": "Bold", "style": "Groovy curvy display serif", "license": "Commercial (purchase required)"},
+      "support": {"font": "Montserrat", "weight": "Medium", "style": "Geometric sans, clean", "license": "Free (Google Fonts)"},
+      "best_for": ["T-Shirts", "Wall Art", "Mugs"],
+      "aesthetic_match": ["Neo-Western", "Moody Gothic Botanical"],
+      "hierarchy_rule": "Moranga for hero text, Montserrat for body and details"
+    },
+    {
+      "id": "dopamine-pop",
+      "hero": {"font": "Lilita One", "weight": "Regular", "style": "Puffy bubble display, high dopamine", "license": "Free (Google Fonts)"},
+      "support": {"font": "Inter", "weight": "Medium", "style": "Clean geometric sans", "license": "Free (Google Fonts)"},
+      "best_for": ["Stickers", "T-Shirts", "Planners"],
+      "aesthetic_match": ["Playful Maximalism", "Circus-Core"],
+      "hierarchy_rule": "Lilita One dominates composition, Inter for fine print only"
+    },
+    {
+      "id": "gothic-editorial",
+      "hero": {"font": "Caslon Antique", "weight": "Regular", "style": "Weathered woodtype serif, distressed edges", "license": "Free (public domain)"},
+      "support": {"font": "Neue Haas Grotesk", "weight": "Regular", "style": "Original Helvetica predecessor, slightly warmer", "license": "Commercial"},
+      "best_for": ["Wall Art", "T-Shirts", "Stickers"],
+      "aesthetic_match": ["Moody Gothic Botanical", "Vintage Matchbook"],
+      "hierarchy_rule": "Caslon Antique for atmosphere and headers, Neue Haas for clean contrast"
+    },
+    {
+      "id": "heritage-craft",
+      "hero": {"font": "Cheltenham Bold", "weight": "Bold", "style": "Workhorse serif, newspaper heritage, sturdy", "license": "Widely available"},
+      "support": {"font": "Inter", "weight": "Regular", "style": "Clean geometric sans", "license": "Free (Google Fonts)"},
+      "best_for": ["Wall Art", "Mugs", "T-Shirts"],
+      "aesthetic_match": ["Soft Stitch", "Heritage Craft"],
+      "hierarchy_rule": "Cheltenham for craft-feel headings, Inter for modern supporting text"
+    },
+    {
+      "id": "streetwear-impact",
+      "hero": {"font": "Bebas Neue", "weight": "Regular", "style": "Ultra-condensed all-caps display sans", "license": "Free (Google Fonts)"},
+      "support": {"font": "Montserrat", "weight": "Regular", "style": "Geometric sans", "license": "Free (Google Fonts)"},
+      "best_for": ["T-Shirts"],
+      "aesthetic_match": ["Streetwear", "Athletic Identity"],
+      "hierarchy_rule": "Bebas Neue for oversized back prints, Montserrat for small front pocket graphics"
+    }
+  ]
+}

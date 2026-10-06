@@ -1,0 +1,116 @@
+{
+  "_comment": "Seed data for the Trend Registry Notion database. Contains verified 2026 micro-aesthetics and color palettes from WGSN, Pantone, Etsy, and design trend forecasters.",
+  "aesthetics": [
+    {
+      "name": "Sardinecore / Bistro Nostalgia",
+      "category": "Aesthetic",
+      "status": "🔥 Rising",
+      "momentum_score": 82,
+      "source": ["Pinterest Predicts", "Etsy Trending", "TikTok"],
+      "platform_velocity": "🚀 Accelerating",
+      "product_fit": ["Mugs", "Wall Art", "Stickers", "T-Shirts"],
+      "color_palette": "#2F6364, #FFB832, #C86446, #F0EEE9, #4B7B7C",
+      "typography": "Recoleta Bold + Inter",
+      "description": "Ornate Mediterranean tinned seafood packaging, Portuguese tile borders, lemons, olive oil cruets, coastal seafood menus, hand-lettered European bistro chalkboards. Appeals to foodie millennials with cosmopolitan taste and apartment-dwellers who romanticize European kitchen culture.",
+      "competitor_saturation": "Medium",
+      "illustration_style": "Retro Mascot"
+    },
+    {
+      "name": "Vintage Matchbook / Motel Ephemera",
+      "category": "Aesthetic",
+      "status": "🔥 Rising",
+      "momentum_score": 88,
+      "source": ["Dribbble", "Etsy Trending", "Instagram"],
+      "platform_velocity": "🚀 Accelerating",
+      "product_fit": ["T-Shirts", "Stickers", "Mugs", "Wall Art"],
+      "color_palette": "#FFB832, #C86446, #2F6364, #F0EEE9, #486B54",
+      "typography": "Cooper Black + Helvetica Neue",
+      "description": "Retro matchbook covers, mid-century motel keytags, roadside diner receipts, vintage apothecary labels, cocktail recipes. Mini-compositions arranged in curated gallery grids. Appeals to nostalgia-driven millennials and Gen Z vintage collectors. Best executed as linocut or screen-print aesthetic with intentional imperfection.",
+      "competitor_saturation": "Low",
+      "illustration_style": "Linocut"
+    },
+    {
+      "name": "Neo-Western / Southwestern Heritage",
+      "category": "Aesthetic",
+      "status": "✅ Peak",
+      "momentum_score": 71,
+      "source": ["Pinterest Predicts", "Google Trends", "Etsy Trending"],
+      "platform_velocity": "➡️ Stable",
+      "product_fit": ["T-Shirts", "Wall Art", "Mugs"],
+      "color_palette": "#C86446, #FFB832, #486B54, #F0EEE9, #4B7B7C",
+      "typography": "Moranga + Montserrat",
+      "description": "Adobe desert landscapes, stylized coyote/quail silhouettes, horseshoe typography, vintage boots with botanical flora, turquoise accents. Shifted away from gaudy festival fringe into subtle, earthy heritage graphics. Appeals to outdoorsy millennials, Southwest residents, and country lifestyle enthusiasts.",
+      "competitor_saturation": "Medium",
+      "illustration_style": "Botanical Line"
+    },
+    {
+      "name": "Playful Maximalism / Circus-Core",
+      "category": "Aesthetic",
+      "status": "🔥 Rising",
+      "momentum_score": 76,
+      "source": ["Etsy Trending", "TikTok", "Dribbble"],
+      "platform_velocity": "🚀 Accelerating",
+      "product_fit": ["Stickers", "T-Shirts", "Planners", "Mugs"],
+      "color_palette": "#D32E5E, #FFB832, #7582FC, #F0EEE9, #B7DBCE",
+      "typography": "Lilita One + Inter",
+      "description": "Bold oversized polka dots, bold circus stripes, checkerboard variations, whimsical naive creatures, Harlequin diamonds. High-dopamine, unapologetically loud. Appeals to Gen Z, creatives, neurodivergent communities, and anyone rejecting corporate minimalism.",
+      "competitor_saturation": "Low",
+      "illustration_style": "Retro Mascot"
+    },
+    {
+      "name": "Soft Stitch / Heritage Craft",
+      "category": "Aesthetic",
+      "status": "🔥 Rising",
+      "momentum_score": 74,
+      "source": ["Pinterest Predicts", "Creative Market", "Instagram"],
+      "platform_velocity": "🚀 Accelerating",
+      "product_fit": ["Wall Art", "Stickers", "Mugs", "T-Shirts"],
+      "color_palette": "#B7DBCE, #F0EEE9, #486B54, #C86446, #4B7B7C",
+      "typography": "Cheltenham Bold + Inter",
+      "description": "Digital designs mimicking physical craft — needlepoint patterns, visible embroidery mending, cross-stitch typography, pressed linoleum relief cuts, risograph grain misregistration. Signals handmade authenticity and rejects mass-produced slickness. Appeals to craft enthusiasts, cottagecore communities, and analog culture appreciators.",
+      "competitor_saturation": "Low",
+      "illustration_style": "Faux-Textile"
+    },
+    {
+      "name": "Moody Gothic Botanical",
+      "category": "Aesthetic",
+      "status": "✅ Peak",
+      "momentum_score": 69,
+      "source": ["Etsy Trending", "Dribbble", "TikTok"],
+      "platform_velocity": "➡️ Stable",
+      "product_fit": ["Wall Art", "Stickers", "T-Shirts", "Mugs"],
+      "color_palette": "#2F6364, #486B54, #1A1A2E, #F0EEE9, #C86446",
+      "typography": "Caslon Antique + Neue Haas Grotesk",
+      "description": "Dark poisonous plants, black forest fauna, Scandinavian folk floral symmetry, nocturnal animals (moths, owls, bats) rendered in hand-carved relief styles. Appeals to #whimsigoth, dark academia, occult-curious, and nature-lover-with-edge communities. Best on dark product blanks.",
+      "competitor_saturation": "Medium",
+      "illustration_style": "Linocut"
+    }
+  ],
+  "color_palettes": [
+    {"name": "Transformative Teal", "hex": "#2F6364", "source": "WGSN/Coloro 2026", "mood": "Deep restorative blue-green", "use": "Base for wall art, unisex hoodies, botanical linocut"},
+    {"name": "Electric Fuchsia", "hex": "#D32E5E", "source": "WGSN/Coloro S/S 2026", "mood": "High-voltage punchy magenta", "use": "Dopamine typography accents, sticker highlights"},
+    {"name": "Blue Aura", "hex": "#7582FC", "source": "WGSN/Coloro S/S 2026", "mood": "Soft dreamy luminous periwinkle", "use": "Y2K pastel graphics, wellness journals, cozy tees"},
+    {"name": "Amber Haze", "hex": "#FFB832", "source": "WGSN/Coloro S/S 2026", "mood": "Warm golden honey ochre", "use": "70s retro text, bistro prints, matchbook art"},
+    {"name": "Jelly Mint", "hex": "#B7DBCE", "source": "WGSN/Coloro S/S 2026", "mood": "Cooling milky translucent mint", "use": "Serene apparel blanks, coastal designs, planner tabs"},
+    {"name": "Cloud Dancer", "hex": "#F0EEE9", "source": "Pantone COTY 2026", "mood": "Airy billowy warm off-white", "use": "Premium canvas backgrounds, vintage washed apparel"},
+    {"name": "Patina Blue", "hex": "#4B7B7C", "source": "Etsy COTY 2026", "mood": "Weathered verdigris copper", "use": "Lived-in home decor, heirloom pottery prints, mugs"},
+    {"name": "Warm Terracotta", "hex": "#C86446", "source": "Earthy Retro Set", "mood": "Grounded baked red clay", "use": "Folk art, Westerncore, autumn collections"},
+    {"name": "Forest Dill", "hex": "#486B54", "source": "Earthy Retro Set", "mood": "Deep earthy herbal sage", "use": "Cottagecore 2.0, botanical wall art, sticker packs"}
+  ],
+  "trend_sources": {
+    "automated": [
+      {"name": "Google Trends", "url": "https://trends.google.com/", "frequency": "Weekly", "signal": "Search velocity"},
+      {"name": "eRank", "url": "https://erank.com/", "frequency": "Weekly", "signal": "Etsy keyword velocity"},
+      {"name": "Etsy Trending", "url": "https://www.etsy.com/trending", "frequency": "Weekly", "signal": "Platform endorsement"},
+      {"name": "Pinterest Predicts", "url": "https://business.pinterest.com/pinterest-predicts/", "frequency": "Annual + monthly check", "signal": "Forward indicators"},
+      {"name": "TikTok Hashtags", "url": "https://www.tiktok.com/", "frequency": "Weekly", "signal": "Micro-aesthetic community growth"}
+    ],
+    "manual": [
+      {"name": "WGSN/Coloro", "url": "https://www.wgsn.com/", "frequency": "Seasonal", "signal": "Color and mood forecasting"},
+      {"name": "Pantone", "url": "https://www.pantone.com/color-of-the-year", "frequency": "Annual", "signal": "Mass-market color direction"},
+      {"name": "Creative Market Blog", "url": "https://creativemarket.com/blog/", "frequency": "Monthly", "signal": "Font and asset sales velocity"},
+      {"name": "Dribbble", "url": "https://dribbble.com/", "frequency": "Monthly", "signal": "Professional design direction"},
+      {"name": "Behance", "url": "https://www.behance.net/", "frequency": "Monthly", "signal": "Professional design direction"}
+    ]
+  }
+}

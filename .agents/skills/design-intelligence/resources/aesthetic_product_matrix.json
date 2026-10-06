@@ -1,0 +1,48 @@
+{
+  "_comment": "Aesthetic-to-product affinity matrix. Stars (1-5) indicate how well each aesthetic translates to each product type. Use to prioritize which products to create for a given trend.",
+  "matrix": {
+    "Sardinecore / Bistro Nostalgia": {
+      "t_shirt": 3, "mug": 5, "wall_art": 5, "stickers": 4, "planner": 2,
+      "best_product": "mug",
+      "hero_motifs": ["tinned fish labels", "Mediterranean tiles", "lemons", "olive oil", "bistro menus"],
+      "blank_recommendation": "Cream or warm white blanks, enamel camp mugs"
+    },
+    "Vintage Matchbook / Motel Ephemera": {
+      "t_shirt": 5, "mug": 4, "wall_art": 4, "stickers": 5, "planner": 2,
+      "best_product": "t_shirt",
+      "hero_motifs": ["matchbook covers", "motel keytags", "diner receipts", "cocktail labels", "apothecary labels"],
+      "blank_recommendation": "Heavyweight mineral-wash tees (charcoal, terracotta), vinyl stickers"
+    },
+    "Neo-Western / Southwestern Heritage": {
+      "t_shirt": 4, "mug": 3, "wall_art": 5, "stickers": 3, "planner": 2,
+      "best_product": "wall_art",
+      "hero_motifs": ["desert landscapes", "coyote silhouettes", "horseshoe type", "vintage boots", "turquoise accents"],
+      "blank_recommendation": "Natural wood frames, textured linen prints"
+    },
+    "Playful Maximalism / Circus-Core": {
+      "t_shirt": 4, "mug": 3, "wall_art": 3, "stickers": 5, "planner": 4,
+      "best_product": "stickers",
+      "hero_motifs": ["oversized polka dots", "circus stripes", "checkerboard", "naive creatures", "Harlequin diamonds"],
+      "blank_recommendation": "Holographic accent stickers, bright-color tees"
+    },
+    "Soft Stitch / Heritage Craft": {
+      "t_shirt": 3, "mug": 3, "wall_art": 5, "stickers": 3, "planner": 3,
+      "best_product": "wall_art",
+      "hero_motifs": ["needlepoint patterns", "cross-stitch type", "embroidery mending", "linocut relief", "risograph grain"],
+      "blank_recommendation": "Matte textured prints, cream backgrounds"
+    },
+    "Moody Gothic Botanical": {
+      "t_shirt": 4, "mug": 4, "wall_art": 5, "stickers": 5, "planner": 3,
+      "best_product": "wall_art",
+      "hero_motifs": ["poisonous plants", "black forest fauna", "folk floral symmetry", "moths", "owls", "bats"],
+      "blank_recommendation": "Dark charcoal tees, matte black frames, dark-mode planners"
+    }
+  },
+  "price_tiers": {
+    "t_shirt": {"penetration": 19.99, "value": 24.99, "premium": 34.99},
+    "mug": {"penetration": 14.99, "value": 18.99, "premium": 24.99},
+    "wall_art": {"penetration": 12.99, "value": 19.99, "premium": 29.99},
+    "stickers": {"penetration": 4.99, "value": 7.99, "premium": 12.99},
+    "planner": {"penetration": 5.99, "value": 9.99, "premium": 14.99}
+  }
+}
