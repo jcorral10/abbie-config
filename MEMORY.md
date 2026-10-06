@@ -60,6 +60,7 @@
 | ↳ Outbound Relay | `37963d55-66c5-8127-a0f1-f32b446d828b` |
 | ↳ Knowledge Index | `37963d55-66c5-8135-9d38-f46005672025` |
 | **BUSINESS** child DBs | Shop `39d63d55-66c5-813e-8c5f-ea2515926d27`, Ideas `39d63d55-66c5-81c4-8307-eb50ddaaf96d`, Products `39d63d55-66c5-81bf-b824-e62a7c44ce31`, Listings `39d63d55-66c5-81cd-97b9-c55e5e345757`, Orders `39d63d55-66c5-8102-90ff-d99238dcee7d`, SEO `39d63d55-66c5-815f-a797-e85017d20447`, Snapshots `39d63d55-66c5-8195-8f56-cf7101ec8601` |
+| ↳ Design Intelligence | Trend Registry `3f163d5566c580abbe02fed005c098c3`, Design Briefs `3f163d5566c580ea8e30cf8b75aa92e8` |
 
 ## Architecture Decisions
 
