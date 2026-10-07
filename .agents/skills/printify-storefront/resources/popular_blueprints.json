@@ -1,0 +1,114 @@
+{
+  "blueprints": [
+    {
+      "id": 12, 
+      "name": "Bella+Canvas 3001 Unisex Jersey Tee", 
+      "category": "t-shirt", 
+      "recommended_provider": 29, 
+      "print_positions": ["front", "back", "neck"], 
+      "min_dpi_width": 3600, 
+      "min_dpi_height": 4800, 
+      "base_cost_range": "$7-10", 
+      "suggested_retail": "$24.99"
+    },
+    {
+      "id": 14, 
+      "name": "Gildan 18500 Unisex Heavy Blend Hooded Sweatshirt", 
+      "category": "hoodie", 
+      "recommended_provider": 29, 
+      "print_positions": ["front", "back"], 
+      "min_dpi_width": 3600, 
+      "min_dpi_height": 4800, 
+      "base_cost_range": "$14-18", 
+      "suggested_retail": "$39.99"
+    },
+    {
+      "id": 71, 
+      "name": "White Ceramic Mug - 11oz", 
+      "category": "mug", 
+      "recommended_provider": 10, 
+      "print_positions": ["wrap"], 
+      "min_dpi_width": 2400, 
+      "min_dpi_height": 900, 
+      "base_cost_range": "$4-6", 
+      "suggested_retail": "$14.99"
+    },
+    {
+      "id": 65, 
+      "name": "Kiss-Cut Stickers", 
+      "category": "stickers", 
+      "recommended_provider": 45, 
+      "print_positions": ["front"], 
+      "min_dpi_width": 1200, 
+      "min_dpi_height": 1200, 
+      "base_cost_range": "$1-3", 
+      "suggested_retail": "$4.99"
+    },
+    {
+      "id": 472, 
+      "name": "Tough Phone Cases", 
+      "category": "phone_case", 
+      "recommended_provider": 21, 
+      "print_positions": ["wrap"], 
+      "min_dpi_width": 1000, 
+      "min_dpi_height": 2000, 
+      "base_cost_range": "$10-14", 
+      "suggested_retail": "$25.99"
+    },
+    {
+      "id": 11, 
+      "name": "Gildan 5000 Unisex Heavy Cotton Tee", 
+      "category": "t-shirt", 
+      "recommended_provider": 29, 
+      "print_positions": ["front", "back"], 
+      "min_dpi_width": 3600, 
+      "min_dpi_height": 4800, 
+      "base_cost_range": "$5-8", 
+      "suggested_retail": "$19.99"
+    },
+    {
+      "id": 260, 
+      "name": "Canvas Tote Bag", 
+      "category": "tote_bag", 
+      "recommended_provider": 42, 
+      "print_positions": ["front", "back"], 
+      "min_dpi_width": 3000, 
+      "min_dpi_height": 3000, 
+      "base_cost_range": "$6-9", 
+      "suggested_retail": "$18.99"
+    },
+    {
+      "id": 221, 
+      "name": "Premium Matte Vertical Posters", 
+      "category": "poster", 
+      "recommended_provider": 10, 
+      "print_positions": ["front"], 
+      "min_dpi_width": 5400, 
+      "min_dpi_height": 7200, 
+      "base_cost_range": "$5-15", 
+      "suggested_retail": "$22.99"
+    },
+    {
+      "id": 820, 
+      "name": "Desk Mat", 
+      "category": "mouse_pad", 
+      "recommended_provider": 23, 
+      "print_positions": ["front"], 
+      "min_dpi_width": 4500, 
+      "min_dpi_height": 2000, 
+      "base_cost_range": "$12-16", 
+      "suggested_retail": "$29.99"
+    },
+    {
+      "id": 483, 
+      "name": "Spiral Notebook", 
+      "category": "notebook", 
+      "recommended_provider": 2, 
+      "print_positions": ["front_cover"], 
+      "min_dpi_width": 2000, 
+      "min_dpi_height": 2800, 
+      "base_cost_range": "$5-7", 
+      "suggested_retail": "$15.99"
+    }
+  ]
+}

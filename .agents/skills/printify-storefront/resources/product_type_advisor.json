@@ -1,0 +1,53 @@
+{
+  "_comment": "Maps generic aspect ratios and designs to Printify product types",
+  "mappings": [
+    {
+      "aspect_ratio": "1:1",
+      "description": "Square",
+      "best_products": ["mugs", "stickers", "phone_cases", "coasters"],
+      "minimum_dpi": 300,
+      "recommended_dimensions_px": [3000, 3000]
+    },
+    {
+      "aspect_ratio": "3:4",
+      "description": "Portrait",
+      "best_products": ["t-shirts", "hoodies", "posters", "tote_bags"],
+      "minimum_dpi": 300,
+      "recommended_dimensions_px": [4500, 5400]
+    },
+    {
+      "aspect_ratio": "2:3",
+      "description": "Tall Portrait",
+      "best_products": ["t-shirts", "posters", "notebooks", "tumblers"],
+      "minimum_dpi": 300,
+      "recommended_dimensions_px": [3600, 5400]
+    },
+    {
+      "aspect_ratio": "4:3",
+      "description": "Landscape",
+      "best_products": ["desk_mats", "mouse_pads", "laptop_sleeves", "puzzles"],
+      "minimum_dpi": 300,
+      "recommended_dimensions_px": [5400, 4500]
+    },
+    {
+      "aspect_ratio": "16:9",
+      "description": "Wide Landscape",
+      "best_products": ["desk_mats", "canvas_wraps"],
+      "minimum_dpi": 300,
+      "recommended_dimensions_px": [7200, 4050]
+    },
+    {
+      "aspect_ratio": "any",
+      "description": "Pattern or All-Over Print",
+      "best_products": ["aop_shirts", "blankets", "pillows"],
+      "minimum_dpi": 150,
+      "recommended_dimensions_px": [8000, 8000]
+    }
+  ],
+  "dpi_requirements_by_category": {
+    "apparel": 150,
+    "paper": 300,
+    "ceramics": 300,
+    "accessories": 300
+  }
+}
