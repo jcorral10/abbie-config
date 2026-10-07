@@ -1,0 +1,188 @@
+{
+  "_comment": "Pricing matrix for Printify POD products. Base costs are averages across top providers. Margins target 60-70% gross profit. All prices in USD.",
+
+  "pricing_philosophy": {
+    "target_margin_pct": 65,
+    "min_margin_pct": 55,
+    "rules": [
+      "Never price below 2.5x base cost — leaves room for Etsy fees (6.5%) + Etsy ads (15%) + profit",
+      "Round retail prices to .99 — psychological pricing converts better",
+      "Premium aesthetics (design-intelligence scored 80+) can command 10-20% premium",
+      "Bundle pricing: sticker packs at 3x single price for 5-pack, 5x for 12-pack",
+      "Seasonal items (Christmas, Valentine's) can be priced 15-25% higher Oct-Dec and Jan-Feb",
+      "First 30 days: price at floor to build reviews, then raise to target after 5+ reviews"
+    ]
+  },
+
+  "fee_structure": {
+    "etsy_listing_fee": 0.20,
+    "etsy_transaction_fee_pct": 6.5,
+    "etsy_payment_processing_pct": 3.0,
+    "etsy_payment_processing_flat": 0.25,
+    "etsy_offsite_ads_pct": 15.0,
+    "etsy_offsite_ads_note": "Only charged when a sale comes from Etsy's offsite ads. Shops under $10k/yr can opt out.",
+    "printify_subscription": 0,
+    "printify_subscription_note": "Free plan. Premium ($29.99/mo) gives 20% off all products."
+  },
+
+  "pricing_formula": {
+    "description": "retail_price = (base_cost + avg_shipping_to_printify) / (1 - target_margin_pct/100)",
+    "with_fees": "effective_profit = retail_price - base_cost - (retail_price * 0.065) - (retail_price * 0.03 + 0.25) - 0.20",
+    "example": {
+      "product": "Bella+Canvas 3001 T-Shirt",
+      "base_cost": 9.27,
+      "retail_price": 24.99,
+      "etsy_transaction_fee": 1.62,
+      "etsy_payment_fee": 1.00,
+      "etsy_listing_fee": 0.20,
+      "gross_profit": 12.90,
+      "margin_pct": 51.6,
+      "note": "At $24.99 the margin is ~52%. To hit 65%, price would need to be $29.99 ($20.73 - 9.27 = 65%). But $24.99 is more competitive for new shops."
+    }
+  },
+
+  "products": {
+    "t-shirt_premium": {
+      "blueprint": "Bella+Canvas 3001",
+      "blueprint_id": 12,
+      "base_cost_avg": 9.27,
+      "shipping_us_avg": 4.69,
+      "floor_price": 22.99,
+      "target_price": 26.99,
+      "premium_price": 29.99,
+      "competitor_range": "$19.99 - $34.99",
+      "notes": "Most popular POD blank. Soft, retail-quality fit. Price at $24.99-26.99 for new shops."
+    },
+    "t-shirt_budget": {
+      "blueprint": "Gildan 5000 Heavy Cotton",
+      "blueprint_id": 11,
+      "base_cost_avg": 7.45,
+      "shipping_us_avg": 4.69,
+      "floor_price": 18.99,
+      "target_price": 22.99,
+      "premium_price": 24.99,
+      "competitor_range": "$15.99 - $24.99",
+      "notes": "Budget-friendly option. Heavier fabric. Good for novelty/humor designs."
+    },
+    "hoodie": {
+      "blueprint": "Gildan 18500 Heavy Blend",
+      "blueprint_id": 14,
+      "base_cost_avg": 17.83,
+      "shipping_us_avg": 5.99,
+      "floor_price": 37.99,
+      "target_price": 44.99,
+      "premium_price": 49.99,
+      "competitor_range": "$34.99 - $54.99",
+      "notes": "Higher base cost but strong margins at target. Best sellers in fall/winter."
+    },
+    "mug_11oz": {
+      "blueprint": "White Ceramic Mug 11oz",
+      "blueprint_id": 71,
+      "base_cost_avg": 5.18,
+      "shipping_us_avg": 5.49,
+      "floor_price": 13.99,
+      "target_price": 16.99,
+      "premium_price": 19.99,
+      "competitor_range": "$12.99 - $22.99",
+      "notes": "High perceived value, low base cost. Great margin product. Fragile shipping adds cost."
+    },
+    "mug_15oz": {
+      "blueprint": "White Ceramic Mug 15oz",
+      "blueprint_id": 72,
+      "base_cost_avg": 6.28,
+      "shipping_us_avg": 5.99,
+      "floor_price": 15.99,
+      "target_price": 18.99,
+      "premium_price": 22.99,
+      "competitor_range": "$14.99 - $24.99",
+      "notes": "Upsell from 11oz. Offer both sizes as variants."
+    },
+    "stickers_single": {
+      "blueprint": "Kiss-Cut Stickers",
+      "blueprint_id": 65,
+      "base_cost_avg": 1.85,
+      "shipping_us_avg": 1.29,
+      "floor_price": 3.99,
+      "target_price": 4.99,
+      "premium_price": 5.99,
+      "competitor_range": "$2.99 - $6.99",
+      "notes": "Low price point drives impulse buys. Volume seller. Offer multiple sizes."
+    },
+    "stickers_sheet": {
+      "blueprint": "Sticker Sheet",
+      "blueprint_id": 667,
+      "base_cost_avg": 3.50,
+      "shipping_us_avg": 1.29,
+      "floor_price": 7.99,
+      "target_price": 9.99,
+      "premium_price": 12.99,
+      "competitor_range": "$6.99 - $14.99",
+      "notes": "Higher AOV than singles. 6-12 stickers per sheet. Great for themed collections."
+    },
+    "phone_case": {
+      "blueprint": "Tough Phone Cases",
+      "blueprint_id": 472,
+      "base_cost_avg": 12.65,
+      "shipping_us_avg": 4.99,
+      "floor_price": 24.99,
+      "target_price": 28.99,
+      "premium_price": 34.99,
+      "competitor_range": "$19.99 - $39.99",
+      "notes": "Many model variants. Must list compatible devices in tags/description."
+    },
+    "tote_bag": {
+      "blueprint": "Canvas Tote Bag",
+      "blueprint_id": 260,
+      "base_cost_avg": 7.82,
+      "shipping_us_avg": 4.69,
+      "floor_price": 17.99,
+      "target_price": 21.99,
+      "premium_price": 24.99,
+      "competitor_range": "$15.99 - $29.99",
+      "notes": "Eco-friendly angle in description. 'Reusable', 'sustainable' are strong keywords."
+    },
+    "poster": {
+      "blueprint": "Premium Matte Vertical Poster",
+      "blueprint_id": 221,
+      "base_cost_avg": 7.50,
+      "shipping_us_avg": 5.49,
+      "floor_price": 17.99,
+      "target_price": 22.99,
+      "premium_price": 29.99,
+      "competitor_range": "$14.99 - $39.99",
+      "notes": "Varies greatly by size. 8x10 cheapest, 24x36 highest base cost. Price per size."
+    },
+    "desk_mat": {
+      "blueprint": "Desk Mat",
+      "blueprint_id": 820,
+      "base_cost_avg": 14.20,
+      "shipping_us_avg": 6.49,
+      "floor_price": 27.99,
+      "target_price": 34.99,
+      "premium_price": 39.99,
+      "competitor_range": "$24.99 - $44.99",
+      "notes": "Niche product with dedicated buyers. Gaming/WFH audience. Lower competition."
+    },
+    "notebook": {
+      "blueprint": "Spiral Notebook",
+      "blueprint_id": 483,
+      "base_cost_avg": 6.12,
+      "shipping_us_avg": 4.49,
+      "floor_price": 14.99,
+      "target_price": 17.99,
+      "premium_price": 21.99,
+      "competitor_range": "$12.99 - $24.99",
+      "notes": "Journal/planner audience. 'Lined notebook', 'writing journal' are strong tags."
+    }
+  },
+
+  "seasonal_multipliers": {
+    "christmas_oct_dec": 1.20,
+    "valentines_jan_feb": 1.15,
+    "mothers_day_apr_may": 1.15,
+    "fathers_day_may_jun": 1.10,
+    "back_to_school_jul_aug": 1.10,
+    "halloween_sep_oct": 1.15,
+    "default": 1.00
+  }
+}

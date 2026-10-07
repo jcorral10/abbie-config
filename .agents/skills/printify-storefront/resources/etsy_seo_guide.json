@@ -1,0 +1,147 @@
+{
+  "_comment": "Etsy SEO reference for printify-storefront skill. All rules sourced from Etsy Seller Handbook, eRank best practices, and top-seller analysis.",
+
+  "title_rules": {
+    "max_length": 140,
+    "structure": "[Primary Keyword] [Product Descriptor] - [Secondary Keyword] [Occasion/Recipient] | [Style/Aesthetic]",
+    "rules": [
+      "Front-load the most important keyword in the first 40 characters (Etsy truncates in search results)",
+      "Never start with 'Cute' or 'Funny' alone — too generic, zero search differentiation",
+      "Include the product type (T-Shirt, Mug, Tote Bag) — buyers search for products, not just themes",
+      "Add occasion words (Gift For, Birthday, Christmas, Mother's Day) — high commercial intent",
+      "Use pipe | or dash - as separators, never commas",
+      "Include 2-3 descriptive adjectives maximum",
+      "Avoid ALL CAPS — Etsy penalizes it in search ranking",
+      "Never repeat the same keyword — each word should earn its place"
+    ],
+    "templates": {
+      "apparel": "{Design Theme} {Product Type} - {Occasion} Gift for {Recipient} | {Aesthetic} {Material} Shirt",
+      "mug": "{Design Theme} Coffee Mug - {Occasion} Gift for {Recipient} | {Aesthetic} {Size} Ceramic Cup",
+      "stickers": "{Design Theme} Sticker Pack - {Use Case} {Aesthetic} Vinyl Decals | {Quantity} Sticker Set",
+      "tote": "{Design Theme} Tote Bag - {Occasion} Gift for {Recipient} | {Aesthetic} Canvas Bag",
+      "poster": "{Design Theme} Wall Art Print - {Room} Decor | {Aesthetic} {Size} Poster",
+      "phone_case": "{Design Theme} Phone Case - {Occasion} Gift | {Aesthetic} Protective Case for iPhone Samsung",
+      "notebook": "{Design Theme} Spiral Notebook - {Use Case} Journal | {Aesthetic} {Page Count} Lined Notebook"
+    },
+    "examples": {
+      "good": [
+        "Vintage Motel Sign T-Shirt - Retro Road Trip Gift for Travelers | Matchbook Aesthetic Cotton Tee",
+        "Italian Grandmother Kitchen Mug - Nonna's Coffee Cup Gift for Cooks | Sardinecore Ceramic 11oz",
+        "Botanical Mushroom Sticker Pack - Cottagecore Journal Decals | 12 Vinyl Waterproof Stickers",
+        "Southwestern Cactus Tote Bag - Desert Lover Gift for Her | Neo-Western Canvas Bag"
+      ],
+      "bad": [
+        "Cute Funny Shirt",
+        "AWESOME MUG FOR COFFEE LOVERS!!!",
+        "Stickers stickers stickers pack cute stickers",
+        "Nice Design T-Shirt Gift Idea"
+      ]
+    }
+  },
+
+  "tag_strategy": {
+    "max_tags": 13,
+    "max_tag_length": 20,
+    "rules": [
+      "Use ALL 13 tags — every unused tag is wasted search visibility",
+      "Mix broad + long-tail: 4 broad terms, 5 mid-tail, 4 long-tail niche",
+      "Multi-word tags are treated as phrases — 'vintage motel shirt' is one tag",
+      "Don't repeat words already in your title — tags supplement, not duplicate",
+      "Include gift-related tags: 'gift for him', 'gift for her', 'birthday gift'",
+      "Include seasonal tags when relevant: 'christmas gift', 'valentines day'",
+      "Include material/style tags: 'retro design', 'minimalist art', 'hand drawn'",
+      "Include use-case tags: 'laptop sticker', 'water bottle decal', 'planner sticker'",
+      "Avoid single generic words: 'cool', 'nice', 'awesome' waste a tag slot"
+    ],
+    "tag_categories": {
+      "broad": ["Product type (e.g., 'graphic tee')", "General theme (e.g., 'vintage design')", "Material (e.g., 'cotton shirt')", "Gender/audience (e.g., 'unisex tee')"],
+      "mid_tail": ["Theme + product (e.g., 'retro motel shirt')", "Occasion + product (e.g., 'birthday mug')", "Style + descriptor (e.g., 'boho wall art')", "Recipient + occasion (e.g., 'gift for dad')", "Aesthetic name (e.g., 'cottagecore decor')"],
+      "long_tail": ["Specific niche (e.g., 'road trip journal')", "Micro-aesthetic (e.g., 'sardinecore mug')", "Specific occasion (e.g., 'housewarming gift')", "Identity + product (e.g., 'plant mom tote')"]
+    },
+    "example_tag_set": {
+      "design": "Vintage Motel Sign T-Shirt",
+      "tags": [
+        "vintage graphic tee",
+        "retro motel shirt",
+        "road trip tshirt",
+        "motel sign design",
+        "traveler gift",
+        "gift for him",
+        "unisex cotton tee",
+        "retro aesthetic",
+        "matchbook art",
+        "vacation souvenir",
+        "roadside america",
+        "adventure shirt",
+        "birthday gift"
+      ]
+    }
+  },
+
+  "description_template": {
+    "format": "html",
+    "max_length": 6000,
+    "structure": [
+      "Hook line — emotionally compelling opening that speaks to the buyer's identity",
+      "Design story — 2-3 sentences about the aesthetic, inspiration, what makes it unique",
+      "Product specs — material, dimensions, print method, care instructions",
+      "Sizing info (apparel only) — link to size chart or key measurements",
+      "Gift positioning — who this is perfect for, what occasions",
+      "Shipping & production — turnaround time, print-on-demand disclosure",
+      "CTA — encourage favoriting and following the shop"
+    ],
+    "seo_rules": [
+      "First 160 characters appear in Google search results — make them count",
+      "Naturally include 2-3 primary keywords in the first paragraph",
+      "Use bullet points for specs — scannable content converts better",
+      "Mention 'print on demand' or 'made to order' for transparency",
+      "Include care instructions — reduces returns and improves reviews"
+    ],
+    "html_template": "<p><strong>{HOOK_LINE}</strong></p>\n\n<p>{DESIGN_STORY}</p>\n\n<p><strong>Product Details:</strong></p>\n<ul>\n<li>{SPEC_1}</li>\n<li>{SPEC_2}</li>\n<li>{SPEC_3}</li>\n<li>{SPEC_4}</li>\n</ul>\n\n<p><strong>Perfect Gift For:</strong></p>\n<ul>\n<li>{RECIPIENT_1}</li>\n<li>{RECIPIENT_2}</li>\n<li>{RECIPIENT_3}</li>\n</ul>\n\n<p><strong>Sizing:</strong> {SIZING_INFO}</p>\n\n<p><strong>Shipping & Production:</strong> This item is made to order and typically ships within 3-7 business days. Each piece is printed with care using premium {PRINT_METHOD} printing.</p>\n\n<p>♥ Favorite this item to save it for later! Follow our shop for new designs weekly.</p>"
+  },
+
+  "product_type_specs": {
+    "t-shirt": {
+      "keywords": ["graphic tee", "t-shirt", "shirt", "tshirt", "cotton tee", "unisex shirt"],
+      "sizing_note": "Unisex fit — runs true to size. See size chart in images for exact measurements.",
+      "specs": ["100% combed ring-spun cotton (Bella+Canvas) or heavy cotton (Gildan)", "Pre-shrunk fabric", "Side-seamed construction", "Tear-away label for comfort", "Direct-to-garment (DTG) eco-friendly printing"],
+      "care": "Machine wash cold inside-out, tumble dry low. Do not iron directly on print."
+    },
+    "hoodie": {
+      "keywords": ["hoodie", "hooded sweatshirt", "pullover", "sweatshirt", "cozy hoodie"],
+      "sizing_note": "Unisex fit — slightly oversized for comfort. Size down for a fitted look.",
+      "specs": ["50% cotton, 50% polyester blend", "Pill-resistant air jet yarn", "Double-lined hood with matching drawstring", "Front pouch pocket", "DTG printed for vibrant, lasting color"],
+      "care": "Machine wash cold, tumble dry low. Do not bleach."
+    },
+    "mug": {
+      "keywords": ["coffee mug", "ceramic mug", "tea cup", "mug", "coffee cup", "drinkware"],
+      "sizing_note": "11oz standard size — 3.8\" tall, holds a perfect cup of coffee or tea.",
+      "specs": ["Premium white ceramic", "Dishwasher and microwave safe", "Vibrant sublimation print that won't fade", "Glossy finish", "C-handle for comfortable grip"],
+      "care": "Dishwasher safe (top rack recommended). Microwave safe."
+    },
+    "stickers": {
+      "keywords": ["sticker", "vinyl sticker", "decal", "sticker pack", "waterproof sticker", "laptop sticker"],
+      "sizing_note": "Available in multiple sizes. Kiss-cut for easy peel-and-stick application.",
+      "specs": ["Premium vinyl with protective laminate", "Waterproof and scratch-resistant", "UV resistant — won't fade in sunlight", "Removable adhesive — won't damage surfaces", "Kiss-cut for easy application"],
+      "care": "Apply to clean, dry surfaces. Indoor/outdoor use."
+    },
+    "tote_bag": {
+      "keywords": ["tote bag", "canvas bag", "shopping bag", "reusable bag", "book bag", "tote"],
+      "sizing_note": "15\" x 16\" — roomy enough for groceries, books, or daily essentials.",
+      "specs": ["100% cotton canvas", "Reinforced stitching at stress points", "Comfortable shoulder straps", "Vibrant DTG print on one or both sides", "Machine washable"],
+      "care": "Machine wash cold, hang dry or tumble dry low."
+    },
+    "poster": {
+      "keywords": ["wall art", "art print", "poster", "home decor", "wall decor", "room decor"],
+      "sizing_note": "Available in multiple sizes. Printed on premium matte paper.",
+      "specs": ["Premium matte finish paper (175-200 gsm)", "Giclée printing for museum-quality color", "Ships flat in protective packaging", "Unframed — ready for your favorite frame", "Vibrant, fade-resistant inks"],
+      "care": "Frame behind glass for best longevity. Avoid direct sunlight."
+    },
+    "phone_case": {
+      "keywords": ["phone case", "iPhone case", "Samsung case", "protective case", "phone cover", "slim case"],
+      "sizing_note": "Available for iPhone and Samsung Galaxy models. Check variant for your specific model.",
+      "specs": ["Impact-resistant polycarbonate shell", "TPU rubber liner for shock absorption", "Raised bezels protect screen and camera", "Wireless charging compatible", "Vivid, scratch-resistant print"],
+      "care": "Wipe clean with damp cloth."
+    }
+  }
+}
