@@ -96,9 +96,9 @@ skills:
     last_deployed: null
   - name: travel-planner
     status: active
-    blocker: Push to VM and verify FIRECRAWL_API_KEY has Alexandria access
+    blocker: null
     cron_count: 0
-    last_deployed: null
+    last_deployed: '2026-10-13'
   - name: work-context-handoff
     status: active
     blocker: null
