@@ -1,0 +1,200 @@
+{
+  "_description": "Travel data providers available through Firecrawl MCP Alexandria. Use firecrawl_scrape with the 'alexandria' parameter to call these.",
+  "accommodation": {
+    "booking-com": {
+      "name": "Booking.com",
+      "capabilities": {
+        "hotels/locations": {
+          "purpose": "Resolve destination name to Booking.com dest_id/dest_type",
+          "cost": 5,
+          "required_options": {"query": "string (place or property name)"},
+          "optional_options": {"count": "number (1-10, default 5)", "lang": "string (default en-us)"},
+          "returns": "dest_id, dest_type, hotel_id, name, coordinates"
+        },
+        "hotels/search": {
+          "purpose": "Search accommodations by destination and dates with live pricing",
+          "cost": 5,
+          "required_options": {"dest_id": "number (from locations)", "dest_type": "string (CITY/DISTRICT/etc from locations)"},
+          "optional_options": {
+            "checkin": "YYYY-MM-DD (default 30d from today)",
+            "checkout": "YYYY-MM-DD (default 1 night)",
+            "adults": "number (default 2)",
+            "children_ages": "number[] (ages 0-17)",
+            "rooms": "number (default 1)",
+            "currency": "string (default USD)",
+            "sort": "string: popularity|class_asc|class_desc|distance|price|review_score|upsort_bh",
+            "filters": "string (e.g. 'ht_id=201' for apartments, 'ht_id=208' for bed and breakfasts)",
+            "limit": "number (1-25, default 25)",
+            "skip": "number (pagination)"
+          },
+          "returns": "hotel_id, name, review_score, star_rating, price, country_code, page_name, coordinates"
+        },
+        "hotels/hotel": {
+          "purpose": "Full property details (description, facilities, policies, house rules)",
+          "cost": 5,
+          "required_options": {},
+          "optional_options": {"country_code": "string", "page_name": "string", "url": "string (alternative to country_code+page_name)"},
+          "returns": "Full property detail including facilities, policies, reviews"
+        },
+        "hotels/availability": {
+          "purpose": "Room availability and pricing for specific property and dates",
+          "cost": 5,
+          "required_options": {"hotel_id": "number (from search)"},
+          "optional_options": {"checkin": "YYYY-MM-DD", "checkout": "YYYY-MM-DD", "adults": "number", "rooms": "number", "currency": "string"},
+          "returns": "Room offers with prices, cancellation policies, meal plans, rooms_left"
+        },
+        "hotels/reviews": {
+          "purpose": "Guest reviews for a property",
+          "cost": 5,
+          "required_options": {"hotel_id": "number"},
+          "optional_options": {"limit": "number (1-25)", "sort": "MOST_RELEVANT|NEWEST_FIRST|SCORE_DESC"},
+          "returns": "Review scores, positive/negative text, guest info"
+        }
+      }
+    },
+    "vrbo-com": {
+      "name": "Vrbo Vacation Rentals",
+      "capabilities": {
+        "vacation-rentals/suggest_destinations": {
+          "purpose": "Resolve place name to Vrbo region_id",
+          "cost": 0,
+          "required_options": {"query": "string"},
+          "returns": "region_id, region_type, name, coordinates"
+        },
+        "vacation-rentals/search": {
+          "purpose": "Search vacation rentals with pricing",
+          "cost": 5,
+          "required_options": {"region_id": "string (from suggest_destinations)"},
+          "optional_options": {"checkin": "YYYY-MM-DD", "checkout": "YYYY-MM-DD", "adults": "number", "children": "number", "bedrooms_min": "number", "bathrooms_min": "number"},
+          "returns": "listing_id, name, bedrooms, bathrooms, price, rating, url"
+        },
+        "vacation-rentals/listing": {
+          "purpose": "Full listing details",
+          "cost": 5,
+          "required_options": {"listing_id": "string (from search)"},
+          "returns": "Full property details, amenities, photos, description"
+        },
+        "vacation-rentals/quote": {
+          "purpose": "Price quote for specific dates",
+          "cost": 5,
+          "required_options": {"listing_id": "string", "checkin": "YYYY-MM-DD", "checkout": "YYYY-MM-DD", "adults": "number"},
+          "returns": "Total price, nightly rate, fees breakdown"
+        }
+      }
+    }
+  },
+  "flights": {
+    "flights-google-com": {
+      "name": "Google Flights",
+      "capabilities": {
+        "flights/suggest_places": {
+          "purpose": "Resolve city/airport name to IATA code or Google city ID",
+          "cost": 0,
+          "required_options": {"query": "string"},
+          "returns": "id (IATA or /m/xxxx), kind (city/airport), name"
+        },
+        "flights/search_flights": {
+          "purpose": "Live flight search with fares",
+          "cost": 5,
+          "required_options": {"origin": "string (IATA or city ID)", "destination": "string (IATA or city ID)"},
+          "optional_options": {
+            "departure_date": "YYYY-MM-DD",
+            "return_date": "YYYY-MM-DD (for round trip)",
+            "adults": "number (default 1)",
+            "children": "number",
+            "cabin_class": "economy|premium_economy|business|first",
+            "max_stops": "number",
+            "currency": "string (default USD)",
+            "limit": "number (1-50, default 10)"
+          },
+          "returns": "price, airline, duration, stops, segments, bags_included, booking URLs"
+        }
+      }
+    },
+    "skyscanner-net": {
+      "name": "Skyscanner",
+      "capabilities": {
+        "flights/suggest_places": {
+          "purpose": "Resolve city/airport to Skyscanner place_id and entity_id",
+          "cost": 5,
+          "required_options": {"query": "string"},
+          "returns": "place_id (LOND/JFK), entity_id (27544008), name"
+        },
+        "flights/search_flights": {
+          "purpose": "Live flight search with booking links",
+          "cost": 5,
+          "required_options": {"origin_entity_id": "string", "destination_entity_id": "string"},
+          "optional_options": {
+            "outbound_date": "YYYY-MM-DD",
+            "inbound_date": "YYYY-MM-DD (for round trip)",
+            "adults": "number (1-8)",
+            "cabin_class": "economy|premium_economy|business|first",
+            "sort": "best|cheapest|fastest",
+            "max_stops": "number (0-2)",
+            "max_results": "number (1-50, default 10)"
+          },
+          "returns": "price, airlines, duration, stops, booking URLs with deep links"
+        },
+        "flights/price_calendar": {
+          "purpose": "Cheapest fare per day for next 12 months (cached indicative)",
+          "cost": 5,
+          "required_options": {"origin": "string (place_id like NYCA)", "destination": "string (place_id like LOND)"},
+          "optional_options": {"max_days": "number (1-366)"},
+          "returns": "date, amount, price group (low/medium/high)"
+        },
+        "flights/monthly_prices": {
+          "purpose": "Cheapest fare per month for next 12 months",
+          "cost": 5,
+          "required_options": {"origin_entity_id": "string", "destination_entity_id": "string"},
+          "optional_options": {"trip_type": "return|one_way", "direct_only": "boolean"},
+          "returns": "year, month, amount, price_category"
+        }
+      }
+    }
+  },
+  "car_rentals": {
+    "turo-com": {
+      "name": "Turo",
+      "capabilities": {
+        "car-rentals/search": {
+          "purpose": "Search peer-to-peer car rentals by location",
+          "cost": 1,
+          "required_options": {"latitude": "number", "longitude": "number"},
+          "optional_options": {
+            "start": "YYYY-MM-DDTHH:MM (local time)",
+            "end": "YYYY-MM-DDTHH:MM (local time)",
+            "vehicle_type": "CAR|SUV|MINIVAN|TRUCK|VAN",
+            "sort": "RELEVANCE|PRICE_LOW|PRICE_HIGH|DISTANCE",
+            "limit": "number (1-50, default 10)"
+          },
+          "returns": "make, model, year, rating, daily price, total quote, url"
+        },
+        "car-rentals/vehicle": {
+          "purpose": "Full vehicle details and optional price estimate",
+          "cost": 1,
+          "required_options": {"url": "string (Turo vehicle URL from search)"},
+          "optional_options": {"start": "datetime", "end": "datetime", "include_quote": "boolean"},
+          "returns": "Full specs, description, pricing, status"
+        }
+      }
+    }
+  },
+  "events_tickets": {
+    "seatgeek-com": {"name": "SeatGeek", "tool_count": 7, "purpose": "Search events, venues, performers; ticket availability and price ranges"},
+    "stubhub-com": {"name": "StubHub", "tool_count": 3, "purpose": "Search events, event details, resale ticket offers"},
+    "tickpick-com": {"name": "TickPick", "tool_count": 7, "purpose": "Events discovery, all-in pricing, price history"},
+    "todaytix-com": {"name": "TodayTix", "tool_count": 5, "purpose": "Theater shows, ticket availability, Rush/Lottery info"}
+  },
+  "outdoor_camping": {
+    "campspot-com": {"name": "Campspot", "tool_count": 5, "purpose": "Campground search with availability and pricing"},
+    "hipcamp-com": {"name": "Hipcamp", "tool_count": 7, "purpose": "Glamping, cabins, campsites with pricing"},
+    "recreation-gov": {"name": "Recreation.gov", "tool_count": 8, "purpose": "National park campgrounds, permits, availability"}
+  },
+  "transportation": {
+    "amtrak-com": {"name": "Amtrak", "tool_count": 7, "purpose": "Train stations, routes, live tracking (no fares)"},
+    "spothero-com": {"name": "SpotHero", "tool_count": 11, "purpose": "Parking discovery and pricing"}
+  },
+  "travel_info": {
+    "travel-state-gov": {"name": "U.S. State Department", "tool_count": 3, "purpose": "Travel advisories (levels 1-4), entry requirements, safety info"}
+  }
+}
