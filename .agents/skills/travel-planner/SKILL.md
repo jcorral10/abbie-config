@@ -21,7 +21,7 @@ If Jon asks "find me a hotel in Hermann, Missouri" — your response should be s
 
 **Rule 3: Search multiple providers and compare.**
 
-The script automatically searches Booking.com AND Vrbo for hotels, Google Flights AND Skyscanner for flights. Present results in a clean comparison table.
+The script scrapes Booking.com for hotel prices and searches the web for additional listings from Vrbo, Airbnb, and other sites. For flights, it searches Kayak and Google. Present results in a clean comparison table.
 
 **Rule 4: Always tie results back to Jon's points strategy.**
 
@@ -39,13 +39,9 @@ python3 ~/.hermes/skills/travel-planner/scripts/travel_search.py hotels \
 python3 ~/.hermes/skills/travel-planner/scripts/travel_search.py flights \
   --origin "Kansas City" --destination "Tokyo" --departure 2026-03-15 --return-date 2026-03-25 --adults 2
 
-# Cheapest dates calendar
-python3 ~/.hermes/skills/travel-planner/scripts/travel_search.py flight-calendar \
-  --origin "Kansas City" --destination "Los Angeles"
-
 # Car rentals (Turo)
 python3 ~/.hermes/skills/travel-planner/scripts/travel_search.py cars \
-  --latitude 38.7046 --longitude -90.3882 --start 2026-11-15T10:00 --end 2026-11-17T10:00
+  --destination "Hermann, Missouri" --start 2026-11-15 --end 2026-11-17
 
 # Events (SeatGeek)
 python3 ~/.hermes/skills/travel-planner/scripts/travel_search.py events \
@@ -307,10 +303,10 @@ Jon's home airport is **MCI** (Kansas City International). The script handles ai
 #### D3: Car Rental Search
 **When Jon asks**: "rent a car in [place]", "car rental [place]"
 
-**Action**: Get coordinates for the destination (use web_search if needed), then:
+**Action**:
 ```bash
 python3 ~/.hermes/skills/travel-planner/scripts/travel_search.py cars \
-  --latitude 38.7046 --longitude -90.3882 --start 2026-11-15T10:00 --end 2026-11-17T10:00
+  --destination "Hermann, Missouri" --start 2026-11-15 --end 2026-11-17
 ```
 
 Recommend payment card: Venture X for 2x on everything, or CSR for 3x if booked through Chase Travel.
